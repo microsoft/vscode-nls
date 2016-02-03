@@ -1,0 +1,10 @@
+{
+	"messages": {
+		"goodBye": "Auf Wiedersehen Welt",
+		"hello": "Guten Tag Welt"
+	},
+	"order": [
+		"hello",
+		"goodBye"
+	]
+}

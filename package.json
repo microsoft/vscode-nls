@@ -1,0 +1,25 @@
+{
+	"name": "vscode-nls",
+	"version": "1.0.0",
+	"description": "NPM module to externalize and localize VSCode extensions",
+	"author": "Microsoft Corporation",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/vscode-nls.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-nls/issues"
+	},
+	"main": "./lib/main.js",
+	"typings": "./lib/main",
+	"devDependencies": {
+		"mocha": "^2.3.2",
+		"typescript": "^1.7.5"
+	},
+	"scripts": {
+		"prepublish": "tsc -p ./src",
+		"compile": "tsc -p ./src",
+		"watch": "tsc -w -p ./src"
+	}
+}
