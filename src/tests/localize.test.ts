@@ -22,8 +22,25 @@ describe('Localize', () => {
 		assert.strictEqual(localize('key', message, 'Hello', 'World'), 'Hello World');
 	});
 	
+	it('Pseudo', () => {
+		let localize = nls.config({ locale: 'pseudo', cache: true })();
+		let message = 'Hello World';
+		assert.strictEqual(localize('key', message), '\uFF3BHeelloo Woorld\uFF3D');
+	});
+	
+	it('Pseudo with args', () => {
+		let localize = nls.config({ locale: 'pseudo', cache: true })();
+		let message = 'Hello {0} World';
+		assert.strictEqual(localize('key', message, 'bright'), '\uFF3BHeelloo bright Woorld\uFF3D');
+	});
+	
 	it('External Data German flat', () => {
 		let localize:any = nls.config({ locale: 'de-DE', cache: true })(path.join(__dirname, '..', '..' , 'src', 'tests', 'data'));
+		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
+	});
+	
+	it('External Data German flat with extension', () => {
+		let localize:any = nls.config({ locale: 'de-DE', cache: true })(path.join(__dirname, '..', '..' , 'src', 'tests', 'data.js'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	

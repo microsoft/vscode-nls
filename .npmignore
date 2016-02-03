@@ -1,0 +1,8 @@
+.vscode/
+lib/tests/
+lib/*.map
+src/
+test/
+.eslintrc
+.gitignore
+.npmignore

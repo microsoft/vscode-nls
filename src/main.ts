@@ -88,6 +88,10 @@ function localize(key: string | LocalizeInfo, message: string, ...args: any[]): 
 }
 
 function resolveLanguage(file: string): string {
+	let ext = path.extname(file);
+	if (ext) {
+		file = file.substr(0, file.length - ext.length);
+	}
 	let resolvedLanguage: string;
 	if (_options.cache && _resolvedLanguage) {
 		resolvedLanguage = _resolvedLanguage;
