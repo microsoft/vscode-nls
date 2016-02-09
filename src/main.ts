@@ -53,9 +53,9 @@ function format(message: string, args: any[]): string {
 
 	if (_isPseudo) {
 		// FF3B and FF3D is the Unicode zenkaku representation for [ and ]
-		message = '\uFF3B' + message.replace(/[aouei]/g, '$&$&') + '\uFF3D'
+		message = '\uFF3B' + message.replace(/[aouei]/g, '$&$&') + '\uFF3D';
 	}
-	
+
 	if (args.length === 0) {
 		result = message;
 	} else {
