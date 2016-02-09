@@ -15,7 +15,8 @@ import * as nls from 'vscode-nls';
 
 let localize = nls.config({ locale: 'de-DE', cache: true })();
 
-console.log(localize('key', 'Hello World'));
+console.log(localize('keyOne', "Hello World"));
+console.log(localize('keyTwo', "Current Date {0}", Date.now()));
 ```
 
 The `config` call configures the nls module and should only be called once in an application. You pass in the locale you want to use and whether the resolved locale should be cached for all further calls. The config call returns a function which is used to load a message bundle. During development time the argument should stay empty. There is another tool that helps extracting the message from you sources and create the message bundles autmatically for you. The tools is available [here]().
