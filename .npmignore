@@ -6,3 +6,4 @@ test/
 .eslintrc
 .gitignore
 .npmignore
+.travis.yml
