@@ -1,9 +1,9 @@
 {
-	"messages": {
-		"goodBye": "Auf Wiedersehen Welt",
-		"hello": "Guten Tag Welt"
-	},
-	"order": [
+	"messages": [
+		"Guten Tag Welt",
+		"Auf Wiedersehen Welt"
+	],
+	"keys": [
 		"hello",
 		"goodBye"
 	]

@@ -123,11 +123,7 @@ function resolveLanguage(file: string): string {
 	return file + resolvedLanguage;
 }
 
-interface Map<V> {
-	[key: string]: V;
-}
-
-type JsonFormat = string[] | { messages: Map<string>; order: string[]; };
+type JsonFormat = string[] | { messages: string[]; keys: string[]; };
 
 export function load(file?: string): LocalizeFunc {
 	if (!file) {
@@ -139,10 +135,8 @@ export function load(file?: string): LocalizeFunc {
 			if (Array.isArray(json)) {
 				return createScopedLocalizeFunction(json);
 			} else {
-				if (isDefined(json.messages) && isDefined(json.order)) {
-					let messages: string[] = [];
-					json.order.forEach(key => messages.push(json.messages[key]));
-					return createScopedLocalizeFunction(messages);
+				if (isDefined(json.messages) && isDefined(json.keys)) {
+					return createScopedLocalizeFunction(json.messages);
 				} else {
 					console.error(`String bundle '${file}' uses an unsupported format.`);
 					return localize;
