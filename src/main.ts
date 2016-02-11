@@ -9,7 +9,7 @@ import * as fs from 'fs';
 
 export interface Options {
 	locale?: string;
-	cache?: boolean;
+	cacheLanguageResolution?: boolean;
 }
 
 export interface LocalizeInfo {
@@ -26,7 +26,7 @@ export interface LoadFunc {
 	(file?: string): LocalizeFunc;
 }
 
-let _options: Options = { locale: 'en-US', cache: false };
+let _options: Options = { locale: 'en-US', cacheLanguageResolution: true };
 let _isPseudo: boolean = false;
 let _resolvedLanguage: string = null;
 
@@ -93,7 +93,7 @@ function resolveLanguage(file: string): string {
 		file = file.substr(0, file.length - ext.length);
 	}
 	let resolvedLanguage: string;
-	if (_options.cache && _resolvedLanguage) {
+	if (_options.cacheLanguageResolution && _resolvedLanguage) {
 		resolvedLanguage = _resolvedLanguage;
 	} else {
 		if (_isPseudo || !_options.locale) {
@@ -116,7 +116,7 @@ function resolveLanguage(file: string): string {
 				}
 			}
 		}
-		if (_options.cache) {
+		if (_options.cacheLanguageResolution) {
 			_resolvedLanguage = resolvedLanguage;
 		}
 	}
@@ -125,7 +125,7 @@ function resolveLanguage(file: string): string {
 
 type JsonFormat = string[] | { messages: string[]; keys: string[]; };
 
-export function load(file?: string): LocalizeFunc {
+export function loadMessageBundle(file?: string): LocalizeFunc {
 	if (!file) {
 		return localize;
 	} else {
@@ -154,9 +154,9 @@ export function config(options: Options): LoadFunc {
 		_options.locale = options.locale;
 		_resolvedLanguage = null;
 	}
-	if (isBoolean(options.cache)) {
-		_options.cache = options.cache;
+	if (isBoolean(options.cacheLanguageResolution)) {
+		_options.cacheLanguageResolution = options.cacheLanguageResolution;
 	}
 	_isPseudo = _options.locale === 'pseudo';
-	return load;
+	return loadMessageBundle;
 }
