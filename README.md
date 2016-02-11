@@ -13,13 +13,23 @@ primary use case is for VSCode extensions.
 ```typescript
 import * as nls from 'vscode-nls';
 
-let localize = nls.config({ locale: 'de-DE', cache: true })();
+let localize = nls.config({ locale: 'de-DE' })();
 
 console.log(localize('keyOne', "Hello World"));
 console.log(localize('keyTwo', "Current Date {0}", Date.now()));
 ```
 
-The `config` call configures the nls module and should only be called once in an application. You pass in the locale you want to use and whether the resolved locale should be cached for all further calls. The config call returns a function which is used to load a message bundle. During development time the argument should stay empty. There is another tool that helps extracting the message from you sources and create the message bundles autmatically for you. The tools is available [here]().
+The `config` call configures the nls module and should only be called once in the applications entry point. You pass in the locale you want to use and whether the resolved locale should be cached for all further calls. The config call returns a function which is used to load a message bundle. During development time the argument should stay empty. There is another tool that helps extracting the message from you sources and create the message bundles autmatically for you. The tools is available [here]().
+
+In secondary modules loaded from the 'main' module no configuration is necessary. However you still need to load the nls module and load the message bundle. This looks like this:
+
+```typescript
+import * as nls from 'vscode-nls';
+
+let localize = nls.loadMessageBundle();
+
+console.log(localize('keyOne', "Hello World"));
+```
 
 During development time the strings in the code are presented to the user. If the locale is set to 'pseudo' the messages are modified in the following form:
 
