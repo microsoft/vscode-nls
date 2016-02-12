@@ -35,3 +35,7 @@ During development time the strings in the code are presented to the user. If th
 
 * vowels are doubled
 * the string is prefixed with '\uFF3B' (Unicode zenkaku representation for [) and postfixed with '\uFF3D' (Unicode zenkaku representation for ])
+* 
+
+## LICENSE
+[MIT](LICENSE)
