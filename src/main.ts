@@ -26,7 +26,7 @@ export interface LoadFunc {
 	(file?: string): LocalizeFunc;
 }
 
-let _options: Options = { locale: 'en-US', cacheLanguageResolution: true };
+let _options: Options = { locale: undefined, cacheLanguageResolution: true };
 let _isPseudo: boolean = false;
 let _resolvedLanguage: string = null;
 
@@ -149,13 +149,15 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 	}
 }
 
-export function config(options: Options): LoadFunc {
-	if (isString(options.locale)) {
-		_options.locale = options.locale;
-		_resolvedLanguage = null;
-	}
-	if (isBoolean(options.cacheLanguageResolution)) {
-		_options.cacheLanguageResolution = options.cacheLanguageResolution;
+export function config(options?: Options): LoadFunc {
+	if (options) {
+		if (isString(options.locale)) {
+			_options.locale = options.locale;
+			_resolvedLanguage = null;
+		}
+		if (isBoolean(options.cacheLanguageResolution)) {
+			_options.cacheLanguageResolution = options.cacheLanguageResolution;
+		}
 	}
 	_isPseudo = _options.locale === 'pseudo';
 	return loadMessageBundle;
