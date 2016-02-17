@@ -149,7 +149,18 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 	}
 }
 
-export function config(options?: Options): LoadFunc {
+export function config(opt?: Options | string): LoadFunc {
+	let options: Options;
+	if (isString(opt)) {
+		try {
+			options = JSON.parse(opt);
+		} catch (e) {
+			console.error(`Error parsing nls options: ${opt}`);
+		}
+	} else {
+		options = opt;
+	}
+	
 	if (options) {
 		if (isString(options.locale)) {
 			_options.locale = options.locale;

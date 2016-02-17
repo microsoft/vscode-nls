@@ -1,9 +1,25 @@
 {
-    "version": "0.1.0",
-    "command": "npm",
-    "isShellCommand": true,
-    "args": ["run", "watch"],
-    "showOutput": "silent",
-    "isWatching": true,
-    "problemMatcher": "$tsc-watch"
+	"version": "0.1.0",
+	"command": "npm",
+	"isShellCommand": true,
+	"args": ["run"],
+	"tasks": [
+		{
+			"taskName": "watch",
+			"isBuildCommand": true,
+			"showOutput": "silent",
+			"isWatching": true,
+			"problemMatcher": "$tsc-watch"
+		},
+		{
+			"taskName": "compile",
+			"showOutput": "silent",
+			"problemMatcher": "$tsc"
+		},
+		{
+			"taskName": "test",
+			"isTestCommand": true,
+			"showOutput": "always"
+		}
+	]
 }
