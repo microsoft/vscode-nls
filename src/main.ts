@@ -71,6 +71,10 @@ function format(message: string, args: any[]): string {
 function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
 	return function(key: any, message: string, ...args: any[]): string {
 		if (isNumber(key)) {
+			if (key >= message.length) {
+				console.error(`Broken localize call found. Index out of bounds. Stacktrace is\n: ${(<any>new Error('')).stack}`);
+				return;
+			}
 			return format(messages[key], args);
 		} else {
 			if (isString(message)) {
