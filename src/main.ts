@@ -167,7 +167,7 @@ export function config(opt?: Options | string): LoadFunc {
 	
 	if (options) {
 		if (isString(options.locale)) {
-			_options.locale = options.locale;
+			_options.locale = options.locale.toLowerCase();
 			_resolvedLanguage = null;
 		}
 		if (isBoolean(options.cacheLanguageResolution)) {
