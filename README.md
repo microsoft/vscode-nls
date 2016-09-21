@@ -37,5 +37,10 @@ During development time the strings in the code are presented to the user. If th
 * the string is prefixed with '\uFF3B' (Unicode zenkaku representation for [) and postfixed with '\uFF3D' (Unicode zenkaku representation for ])
 * 
 
+## History
+
+* 2.0.0: based on TypeScritp 2.0. Since TS changed the shape of the d.ts files for 2.0.x a major version number got introduce to not
+  break existing clients using TypeScript 1.8.x.
+
 ## LICENSE
 [MIT](LICENSE)

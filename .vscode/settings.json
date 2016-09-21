@@ -1,4 +1,5 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-	"editor.wrappingColumn": 150
+	"editor.wrappingColumn": 150,
+	"typescript.tsdk": "./node_modules/typescript/lib"
 }

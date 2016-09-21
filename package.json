@@ -1,6 +1,6 @@
 {
 	"name": "vscode-nls",
-	"version": "1.0.7",
+	"version": "2.0.0-beta.1",
 	"description": "NPM module to externalize and localize VSCode extensions",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
@@ -15,7 +15,7 @@
 	"typings": "./lib/main",
 	"devDependencies": {
 		"mocha": "^2.3.2",
-		"typescript": "^1.7.5"
+		"typescript": "^2.0.2"
 	},
 	"scripts": {
 		"prepublish": "tsc -p ./src",
