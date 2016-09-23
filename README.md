@@ -43,4 +43,4 @@ During development time the strings in the code are presented to the user. If th
   break existing clients using TypeScript 1.8.x.
 
 ## LICENSE
-[MIT](LICENSE)
+[MIT](License.txt)
