@@ -67,6 +67,21 @@ function format(message: string, args: any[]): string {
 	return result;
 }
 
+function createObjectLocalizeFunction(messages: { [index: string]: string }): LocalizeFunc {
+	return function(key: any, message: string, ...args: any[]): string {
+		if (isString(key)) {
+			let found = messages[key];
+			if (typeof found != "string") {
+				console.warn(`Message ${message} didn't get externalized correctly.`);
+				return format(message, args);
+			} else {
+				return format(found, args);
+			}
+		} else {
+			console.error(`Broken localize call found. Stacktrace is\n: ${(<any>new Error('')).stack}`);
+		}
+	}
+}
 
 function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
 	return function(key: any, message: string, ...args: any[]): string {
@@ -127,7 +142,7 @@ function resolveLanguage(file: string): string {
 	return file + resolvedLanguage;
 }
 
-type JsonFormat = string[] | { messages: string[]; keys: string[]; };
+type JsonFormat = string[] | { messages: string[]; keys: string[]; } | { [index: string]: string };
 
 export function loadMessageBundle(file?: string): LocalizeFunc {
 	if (!file) {
@@ -138,13 +153,15 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 			let json: JsonFormat = require(resolvedFile);
 			if (Array.isArray(json)) {
 				return createScopedLocalizeFunction(json);
-			} else {
-				if (isDefined(json.messages) && isDefined(json.keys)) {
-					return createScopedLocalizeFunction(json.messages);
+			} else if (typeof json == "object") {
+				if (isDefined((<any>json).messages) && isDefined((<any>json).keys)) {
+					return createScopedLocalizeFunction((<any>json).messages);
 				} else {
-					console.error(`String bundle '${file}' uses an unsupported format.`);
-					return localize;
+					return createObjectLocalizeFunction(<any>json);
 				}
+			} else {
+				console.error(`String bundle '${file}' uses an unsupported format.`);
+				return localize;
 			}
 		} catch (e) {
 			console.error(`Can't load string bundle for ${file}`);
