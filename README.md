@@ -38,7 +38,11 @@ During development time the strings in the code are presented to the user. If th
 
 ## History
 
-### 2.0.0:
+### 2.0.2:
+
+* moved to TypeScript 2.1.5. Adapted to @types d.ts files instead of including typings directly into the repository.
+
+### 2.0.1:
 
 * based on TypeScritp 2.0. Since TS changed the shape of the d.ts files for 2.0.x a major version number got introduce to not
   break existing clients using TypeScript 1.8.x.
