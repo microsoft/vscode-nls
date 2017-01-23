@@ -63,6 +63,12 @@ describe('Localize', () => {
 		assert.strictEqual(localize(1, null), 'Auf Wiedersehen Welt');
 	});
 	
+	it('External Data German object', () => {
+		let localize:any = nls.config({ locale: 'de-DE' })(path.join(__dirname, '..', '..' , 'src', 'tests', 'dataObject'));
+		assert.strictEqual(localize("hello", null), 'Guten Tag Welt');
+		assert.strictEqual(localize("goodBye", null), 'Auf Wiedersehen Welt');
+	});
+	
 	it('Default data file', () => {
 		let localize:any = nls.config({ locale: 'zh-tw' })(path.join(__dirname, '..', '..' , 'src', 'tests', 'data'));
 		assert.strictEqual(localize(0, null), 'Hello World');
