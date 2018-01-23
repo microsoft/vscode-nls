@@ -35,8 +35,8 @@ export interface LoadFunc {
 }
 
 export enum ExtensionKind {
-	prePackaged = 'prePackaged',
-	marketPlace = 'marketPlace'
+	prePackaged = 1,
+	marketPlace = 2
 }
 
 interface LanguageBundle {
@@ -76,21 +76,34 @@ interface InternalOptions {
 	_resolvedLanguagePackExtensionLocation?: string;
 }
 
-let _options: InternalOptions = { locale: undefined, cacheLanguageResolution: true };
-let _isPseudo: boolean = false;
-let _extensionKind: ExtensionKind = undefined;
-let _root: string = undefined;
-let _outDir: string = undefined;
-let _outPath: string = undefined;
+let _options: InternalOptions;
+let _isPseudo: boolean;
+let _extensionKind: ExtensionKind;
+let _root: string;
+let _outDir: string;
+let _outPath: string;
 
-let _resolvedLanguage: string = undefined;
+let _resolvedLanguage: string;
 
 
 // If undefined we never tried to load. If null we tried to load (the bundle exists on disk)
 // but the actual load failed.
-let _resolvedBundle: LanguageBundle | undefined | null = undefined;
+let _resolvedBundle: LanguageBundle | undefined | null;
 
-let _resolvedCacheLocation: string = undefined;
+let _resolvedCacheLocation: string;
+
+function initializeSettings() {
+	_options = { locale: undefined, cacheLanguageResolution: true };
+	_isPseudo = false;
+	_extensionKind = undefined;
+	_root = undefined;
+	_outDir = undefined;
+	_outPath = undefined;
+	_resolvedLanguage = undefined;
+	_resolvedBundle = undefined;
+	_resolvedCacheLocation = undefined;
+}
+initializeSettings();
 
 const toString = Object.prototype.toString;
 
@@ -249,26 +262,8 @@ function loadDefaultBundle(): LanguageBundle {
 	return result;
 }
 
-function loadPrepackagedLanguagePackBundle(): LanguageBundle {
-	let extensionName = require(path.join(_root, 'package.json')).name;
-	let root = path.join(_options._resolvedLanguagePackExtensionLocation);
-	let bundle = path.join(root, `${extensionName}.nls.json`);
-	let useMemoryOnly: boolean = false;
-	let noEntry: boolean = false;
-	try {
-		return JSON.parse(fs.readFileSync(bundle, { encoding: 'utf8', flag: 'r' }));
-	} catch (err) {
-		if (err.code === 'ENOENT') {
-			noEntry = true;
-		} else if (err instanceof SyntaxError) {
-			// We have a syntax error. So no valid JSON. Use
-			console.error(`Syntax error parsing message bundle: ${err.message}`);
-			useMemoryOnly = true;
-		} else {
-			throw err;
-		}
-	}
-	let languagePack: LanguagePack = require(path.join(_options._languagePackLocation, 'translations', 'extensions', `${extensionName}.i18n.json`));
+function createLanguageBundle(extensionName: string): LanguageBundle {
+	let languagePack: LanguagePack = require(path.join(_options._languagePackLocation, 'extensions', `${extensionName}.i18n.json`)).contents;
 	let metaData: MetaDataFile = require(path.join(_outPath, 'nls.metadata.json'));
 	let result: LanguageBundle = Object.create(null);
 	for (let module in metaData.content) {
@@ -290,6 +285,29 @@ function loadPrepackagedLanguagePackBundle(): LanguageBundle {
 			result[module] = entry.messages;
 		}
 	}
+	return result;
+}
+
+function loadPrepackagedLanguagePackBundle(): LanguageBundle {
+	let extensionName = require(path.join(_root, 'package.json')).name;
+	let root = path.join(_options._resolvedLanguagePackExtensionLocation);
+	let bundle = path.join(root, `${extensionName}.nls.json`);
+	let useMemoryOnly: boolean = false;
+	let noEntry: boolean = false;
+	try {
+		return JSON.parse(fs.readFileSync(bundle, { encoding: 'utf8', flag: 'r' }));
+	} catch (err) {
+		if (err.code === 'ENOENT') {
+			noEntry = true;
+		} else if (err instanceof SyntaxError) {
+			// We have a syntax error. So no valid JSON. Use
+			console.error(`Syntax error parsing message bundle: ${err.message}`);
+			useMemoryOnly = true;
+		} else {
+			throw err;
+		}
+	}
+	let result: LanguageBundle = createLanguageBundle(extensionName);
 	if (useMemoryOnly) {
 		return result;
 	}
@@ -310,7 +328,60 @@ function loadPrepackagedLanguagePackBundle(): LanguageBundle {
 }
 
 function loadMarketPlaceLanguagePackBundle(): LanguageBundle {
-	return null;
+	let packageJson = require(path.join(_root, 'package.json'))
+	let extensionName = packageJson.name;
+	let extensionVersion = packageJson.version;
+	let extensionPublisher = packageJson.publisher;
+	if (!extensionName || !extensionVersion || !extensionPublisher) {
+		return undefined;
+	}
+
+	let root = path.join(_options._cacheRoot, `${extensionName}.${extensionPublisher}-${extensionVersion}`);
+	let useMemoryOnly: boolean = false;
+	let noEntry: boolean = false;
+	// We already have a cached bundle. Use it.
+	let bundle = tryResolveBundle(root);
+	let result: LanguageBundle;
+	if (bundle) {
+		try {
+			result = JSON.parse(fs.readFileSync(bundle, { encoding: 'utf8', flag: 'r' }));
+			try {
+				// Touch last used.
+				fs.writeFileSync(path.join(root, 'lastUsed.touch'), '', { encoding: 'utf8', flag: 'w' });
+			} catch (err) {
+				// Ignore error.
+			}
+			return result;
+		} catch (err) {
+			if (err.code === 'ENOENT') {
+				noEntry = true;
+			} else if (err instanceof SyntaxError) {
+				// We have a syntax error. So no valid JSON. Use
+				console.error(`Syntax error parsing message bundle.`, err);
+				useMemoryOnly = true;
+			} else {
+				throw err;
+			}
+		}
+	}
+	result = createLanguageBundle(extensionName);
+	if (useMemoryOnly) {
+		return result;
+	}
+
+	if (noEntry) {
+		mkdir(root);
+		try {
+			fs.writeFileSync(bundle, JSON.stringify(result), { encoding: 'utf8', flag: 'wx' });
+		} catch (err) {
+			if (err.code === 'EEXIST') {
+				return result;
+			}
+			throw err;
+		}
+	}
+
+	return result;
 }
 
 export function loadMessageBundle(file?: string): LocalizeFunc {
@@ -366,19 +437,23 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 				};
 			}
 		}
-	} catch (e) {
-		console.error(`Can't load string bundle for ${file}`);
+	} catch (err) {
+		console.error(`Can't load string bundle for ${file}`, err);
 		return function(): string {
 			return 'Failed to load file bundle. See console for details.';
 		};
 	}
 }
 
-export function config(opt?: Options): LoadFunc;
-export function config(opt?: string): LoadFunc;
+export function config(): LoadFunc;
+export function config(opt: Options): LoadFunc;
+export function config(opt: string): LoadFunc;
+export function config(opt: Options, root: string, outDir: string): LoadFunc;
+export function config(opt: string, root: string, outDir: string): LoadFunc;
 export function config(opt: string, kind: ExtensionKind.prePackaged, root: string, outDir?: string): LoadFunc;
 export function config(opt: string, kind: ExtensionKind.marketPlace, root: string, outDir: string): LoadFunc;
-export function config(opt?: Options | string, kind?: ExtensionKind, root?: string, outDir?: string): LoadFunc {
+export function config(opt?: Options | string, rootOrKind?: ExtensionKind | string, outDirOrRoot?: string, outDir?: string): LoadFunc {
+	initializeSettings();
 	let options: Options;
 	if (isString(opt)) {
 		try {
@@ -388,6 +463,17 @@ export function config(opt?: Options | string, kind?: ExtensionKind, root?: stri
 		}
 	} else {
 		options = opt;
+	}
+
+	let kind: ExtensionKind;
+	let root: string;
+	if (isString(rootOrKind)) {
+		kind = undefined;
+		root = rootOrKind;
+		outDir = outDirOrRoot;
+	} else {
+		kind = rootOrKind;
+		root = outDirOrRoot;
 	}
 
 	if (options) {
@@ -425,11 +511,16 @@ export function config(opt?: Options | string, kind?: ExtensionKind, root?: stri
 		}
 	}
 
-	if (kind && root && path.isAbsolute(root) && (packageJsonExists || fs.existsSync(path.join(root, 'package.json')))) {
-		_extensionKind = kind;
+	if (root && path.isAbsolute(root)) {
 		_root = root;
 		_outDir = outDir;
-		_outPath = path.join(_root, _outDir);
+		if (_outDir) {
+			_outPath = path.join(_root, _outDir);		
+		}
+	}
+
+	if (kind && _root && _outDir && (packageJsonExists || fs.existsSync(path.join(root, 'package.json')))) {
+		_extensionKind = kind;
 	}
 	_isPseudo = _options.locale === 'pseudo';
 
@@ -445,8 +536,7 @@ export function config(opt?: Options | string, kind?: ExtensionKind, root?: stri
 				}
 				return loadMessageBundle;
 			} catch (err) {
-				console.error(`Loading the message bundle from language pack failed with exception: ${err.message}`);
-				console.error(err.stack);
+				console.error(`Loading the message bundle from language pack failed with exception`, err);
 			}
 		}
 		let candidate = tryResolveBundle(path.join(_root, _outDir));
@@ -455,16 +545,14 @@ export function config(opt?: Options | string, kind?: ExtensionKind, root?: stri
 				_resolvedBundle = require(candidate);
 				return loadMessageBundle;
 			} catch (err) {
-				console.error(`Loading in the box message bundle failed: ${err.message}`);
-				console.error(err.stack);
+				console.error(`Loading in the box message bundle failed.`, err);
 			}
 		}
 		try {
 			_resolvedBundle = loadDefaultBundle();
 			return loadMessageBundle;
 		} catch (err) {
-			console.error(`Generating default bundle from meta data failed: ${err.message}`);
-			console.error(err.stack);
+			console.error(`Generating default bundle from meta data failed.`, err);
 			_resolvedBundle = null;
 		}
 	}

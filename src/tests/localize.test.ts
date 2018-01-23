@@ -9,6 +9,8 @@ import * as path from 'path';
 
 import * as nls from '../main';
 
+let root = path.join(__dirname, '..', '..' , 'src', 'tests');
+
 describe('Localize', () => {
 	it('Simple call', () => {
 		let localize = nls.config({ locale: 'de-DE' })();
@@ -42,29 +44,34 @@ describe('Localize', () => {
 	});
 	
 	it('External Data German flat', () => {
-		let localize:any = nls.config({ locale: 'de-DE' })(path.join(__dirname, '..', '..' , 'src', 'tests', 'data'));
+		let localize:any = nls.config({ locale: 'de-DE' })(path.join(root, 'data'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	
 	it('External Data German flat with extension', () => {
-		let localize:any = nls.config({ locale: 'de-DE' })(path.join(__dirname, '..', '..' , 'src', 'tests', 'data.js'));
+		let localize:any = nls.config({ locale: 'de-DE' })(path.join(root, 'data.js'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	
 	it('External Data German flat with extension separate load', () => {
 		nls.config({ locale: 'de-DE' })
-		let localize:any = nls.loadMessageBundle(path.join(__dirname, '..', '..' , 'src', 'tests', 'data.js'));
+		let localize:any = nls.loadMessageBundle(path.join(root, 'data.js'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	
 	it('External Data German structured', () => {
-		let localize:any = nls.config({ locale: 'de-DE' })(path.join(__dirname, '..', '..' , 'src', 'tests', 'dataStructured'));
+		let localize:any = nls.config({ locale: 'de-DE' })(path.join(root, 'dataStructured'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 		assert.strictEqual(localize(1, null), 'Auf Wiedersehen Welt');
 	});
+
+	it ('External Bundle', () => {
+		let localize:any = nls.config({ locale: 'de-DE' }, root, '.')(path.join(root, 'localize.test.js'));
+		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
+	});
 	
 	it('Default data file', () => {
-		let localize:any = nls.config({ locale: 'zh-tw' })(path.join(__dirname, '..', '..' , 'src', 'tests', 'data'));
+		let localize:any = nls.config({ locale: 'zh-tw' })(path.join(root, 'data'));
 		assert.strictEqual(localize(0, null), 'Hello World');
 	});
 });
