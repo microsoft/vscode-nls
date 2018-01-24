@@ -44,34 +44,34 @@ describe('Localize', () => {
 	});
 	
 	it('External Data German flat', () => {
-		let localize:any = nls.config({ locale: 'de-DE' })(path.join(root, 'data'));
+		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })(path.join(root, 'data'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	
 	it('External Data German flat with extension', () => {
-		let localize:any = nls.config({ locale: 'de-DE' })(path.join(root, 'data.js'));
+		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })(path.join(root, 'data.js'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	
 	it('External Data German flat with extension separate load', () => {
-		nls.config({ locale: 'de-DE' })
+		nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })
 		let localize:any = nls.loadMessageBundle(path.join(root, 'data.js'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	
 	it('External Data German structured', () => {
-		let localize:any = nls.config({ locale: 'de-DE' })(path.join(root, 'dataStructured'));
+		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })(path.join(root, 'dataStructured'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 		assert.strictEqual(localize(1, null), 'Auf Wiedersehen Welt');
 	});
 
 	it ('External Bundle', () => {
-		let localize:any = nls.config({ locale: 'de-DE' }, root, '.')(path.join(root, 'localize.test.js'));
+		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.bundle })(path.join(root, 'localize.test.js'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 	
 	it('Default data file', () => {
-		let localize:any = nls.config({ locale: 'zh-tw' })(path.join(root, 'data'));
+		let localize:any = nls.config({ locale: 'zh-tw', messageFormat: nls.MessageFormat.file })(path.join(root, 'data'));
 		assert.strictEqual(localize(0, null), 'Hello World');
 	});
 });
