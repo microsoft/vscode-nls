@@ -426,8 +426,13 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 			if (bundle === undefined) {
 				try {
 					let header: MetadataHeader = JSON.parse(fs.readFileSync(headerFile, 'utf8'));
-					let nlsBundle = loadNlsBundle(header, bundlePath);
-					bundle = cacheBundle(bundlePath, nlsBundle ? { header, nlsBundle } : null);
+					try {
+						let nlsBundle = loadNlsBundle(header, bundlePath);
+						bundle = cacheBundle(bundlePath, nlsBundle ? { header, nlsBundle } : null);
+					} catch (err) {
+						console.error('Failed to load nls bundle', err);
+						bundle = cacheBundle(bundlePath, null);
+					}
 				} catch (err) {
 					console.error('Failed to read header file', err);
 					bundle = cacheBundle(bundlePath, null);
