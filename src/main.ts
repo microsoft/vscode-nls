@@ -320,8 +320,8 @@ function cacheBundle(key: string, bundle: LanguageBundle | null): LanguageBundle
 function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: string): NlsBundle | undefined {
 	let result: NlsBundle
 
-	let root = path.join(options.cacheRoot, `${header.id}`);
-	let bundle = path.join(root, `${header.hash}-${options.languagePackId}.nls.json`);
+	let root = path.join(options.cacheRoot, `${header.id}-${header.hash}`);
+	let bundle = path.join(root, `nls.bundle.json`);
 	let useMemoryOnly: boolean = false;
 	let writeBundle: boolean = false;
 	try {
