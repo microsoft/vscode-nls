@@ -326,7 +326,7 @@ function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: strin
 	let writeBundle: boolean = false;
 	try {
 		result = JSON.parse(fs.readFileSync(bundle, { encoding: 'utf8', flag: 'r' }));
-		touch(bundle);
+		touch(root);
 		return result;
 	} catch (err) {
 		if (err.code === 'ENOENT') {
