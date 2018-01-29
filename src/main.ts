@@ -82,6 +82,10 @@ interface MetaDataFile {
 	[key: string]: MetaDataEntry;
 }
 
+interface TranslationConfig {
+	[extension: string]: string;
+}
+
 interface I18nBundle {
 	version: string,
 	contents: {
@@ -99,7 +103,7 @@ interface LanguageBundle {
 interface VSCodeNlsConfig {
 	locale: string;
 	_languagePackId?: string;
-	_languagePackLocation?: string;
+	_translationsConfigFile?: string;
 	_cacheRoot?: string;
 }
 
@@ -108,7 +112,8 @@ interface InternalOptions {
 	cacheLanguageResolution: boolean;
 	messageFormat: MessageFormat;
 	languagePackId?: string;
-	languagePackLocation?: string;
+	translationsConfigFile?: string;
+	translationsConfig?: TranslationConfig
 	cacheRoot?: string;
 }
 
@@ -124,7 +129,7 @@ function initializeSettings() {
 	options = { locale: undefined, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle};
 	if (isString(process.env.VSCODE_NLS_CONFIG)) {
 		try {
-			let vscodeOptions = JSON.parse(process.env.VSCODE_NLS_CONFIG);
+			let vscodeOptions = JSON.parse(process.env.VSCODE_NLS_CONFIG) as VSCodeNlsConfig;
 			if (isString(vscodeOptions.locale)) {
 				options.locale = vscodeOptions.locale.toLowerCase();
 			}
@@ -134,8 +139,13 @@ function initializeSettings() {
 			if (isString(vscodeOptions._languagePackId)) {
 				options.languagePackId = vscodeOptions._languagePackId;
 			}
-			if (isString(vscodeOptions._languagePackLocation)) {
-				options.languagePackLocation = vscodeOptions._languagePackLocation;
+			if (isString(vscodeOptions._translationsConfigFile)) {
+				options.translationsConfigFile = vscodeOptions._translationsConfigFile;
+				try {
+					options.translationsConfig = require(options.translationsConfigFile);
+				} catch(error) {
+					// Do nothing
+				}
 			}
 		} catch {
 			// Do nothing.
@@ -148,7 +158,8 @@ function initializeSettings() {
 initializeSettings();
 
 function supportsLanguagePack(): boolean {
-	return options.cacheRoot !== undefined && options.languagePackId !== undefined && options.languagePackLocation !== undefined;
+	return options.cacheRoot !== undefined && options.languagePackId !== undefined && options.translationsConfigFile !== undefined
+		&& options.translationsConfig !== undefined;
 }
 
 function format(message: string, args: any[]): string {
@@ -279,8 +290,12 @@ function createDefaultNlsBundle(folder: string): NlsBundle {
 	return result;
 }
 
-function createNLSBundle(header: MetadataHeader, metaDataPath: string): NlsBundle {
-	let languagePack: I18nBundle = require(path.join(options.languagePackLocation, 'extensions', `${header.id}.i18n.json`)).contents;
+function createNLSBundle(header: MetadataHeader, metaDataPath: string): NlsBundle  | undefined {
+	let languagePackLocation = options.translationsConfig[header.id];
+	if (!languagePackLocation) {
+		return undefined;
+	}
+	let languagePack: I18nBundle = require(languagePackLocation).contents;
 	let metaData: MetaDataFile = require(path.join(metaDataPath, 'nls.metadata.json'));
 	let result: NlsBundle = Object.create(null);
 	for (let module in metaData) {
@@ -333,7 +348,7 @@ function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: strin
 			writeBundle = true;
 		} else if (err instanceof SyntaxError) {
 			// We have a syntax error. So no valid JSON. Use
-			console.error(`Syntax error parsing message bundle: ${err.message}`);
+			console.log(`Syntax error parsing message bundle: ${err.message}`);
 			useMemoryOnly = true;
 		} else {
 			throw err;
@@ -341,8 +356,7 @@ function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: strin
 	}
 
 	result = createNLSBundle(header, bundlePath);
-
-	if (useMemoryOnly) {
+	if (!result || useMemoryOnly) {
 		return result;
 	}
 
@@ -365,8 +379,12 @@ function loadNlsBundle(header: MetadataHeader, bundlePath: string): NlsBundle | 
 	let result: NlsBundle;
 
 	// Core decided to use a language pack. Do the same in the extension
-	if (options.languagePackId) {
-		result = loadNlsBundleOrCreateFromI18n(header, bundlePath);
+	if (supportsLanguagePack()) {
+		try {
+			result = loadNlsBundleOrCreateFromI18n(header, bundlePath);
+		} catch (err) {
+			console.log(`Load or create bundle failed `, err);
+		}
 	}
 	if (!result) {
 		let candidate = findInTheBoxBundle(bundlePath);
@@ -374,13 +392,13 @@ function loadNlsBundle(header: MetadataHeader, bundlePath: string): NlsBundle | 
 			try {
 				return require(candidate);
 			} catch (err) {
-				console.error(`Loading in the box message bundle failed.`, err);
+				console.log(`Loading in the box message bundle failed.`, err);
 			}
 		}
 		try {
 			result = createDefaultNlsBundle(bundlePath);
 		} catch (err) {
-			console.error(`Generating default bundle from meta data failed.`, err);
+			console.log(`Generating default bundle from meta data failed.`, err);
 			result = undefined;
 		}
 	}
