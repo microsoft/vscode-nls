@@ -335,13 +335,12 @@ function cacheBundle(key: string, bundle: LanguageBundle | null): LanguageBundle
 function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: string): NlsBundle | undefined {
 	let result: NlsBundle
 
-	let root = path.join(options.cacheRoot, `${header.id}-${header.hash}`);
-	let bundle = path.join(root, `nls.bundle.json`);
+	let bundle = path.join(options.cacheRoot, `${header.id}-${header.hash}.json`);
 	let useMemoryOnly: boolean = false;
 	let writeBundle: boolean = false;
 	try {
 		result = JSON.parse(fs.readFileSync(bundle, { encoding: 'utf8', flag: 'r' }));
-		touch(root);
+		touch(bundle);
 		return result;
 	} catch (err) {
 		if (err.code === 'ENOENT') {
@@ -361,7 +360,6 @@ function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: strin
 	}
 
 	if (writeBundle) {
-		mkdir(root);
 		try {
 			fs.writeFileSync(bundle, JSON.stringify(result), { encoding: 'utf8', flag: 'wx' });
 		} catch (err) {
