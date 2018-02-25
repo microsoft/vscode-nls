@@ -272,7 +272,7 @@ function mkdir(directory: string) {
 			let parent = path.dirname(directory);
 			if (parent !== directory) {
 				mkdir(parent);
-				fs.mkdir(directory);
+				fs.mkdirSync(directory);
 			}
 		} else {
 			throw err;
