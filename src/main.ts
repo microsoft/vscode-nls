@@ -105,6 +105,7 @@ interface VSCodeNlsConfig {
 	_languagePackId?: string;
 	_translationsConfigFile?: string;
 	_cacheRoot?: string;
+	_corruptedFile: string;
 }
 
 interface InternalOptions {
@@ -144,7 +145,12 @@ function initializeSettings() {
 				try {
 					options.translationsConfig = require(options.translationsConfigFile);
 				} catch(error) {
-					// Do nothing
+					// We can't read the translation config file. Mark the cache as corrupted.
+					if (vscodeOptions._corruptedFile) {
+						fs.writeFile(vscodeOptions._corruptedFile, 'corrupted', 'utf8', (err) => {
+							console.error(err);
+						});
+					}
 				}
 			}
 		} catch {
