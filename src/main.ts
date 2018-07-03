@@ -347,11 +347,16 @@ function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: strin
 			writeBundle = true;
 		} else if (err instanceof SyntaxError) {
 			// We have a syntax error. So no valid JSON. Use
-			console.log(`Syntax error parsing message bundle: ${err.message}`);
+			console.log(`Syntax error parsing message bundle: ${err.message}.`);
+			fs.unlink(bundle, (err) => {
+				if (err) {
+					console.error(`Deleting corrupted bundle ${bundle} failed.`);
+				}
+			});
 			useMemoryOnly = true;
 		} else {
 			throw err;
-		}		
+		}
 	}
 
 	result = createNLSBundle(header, bundlePath);
