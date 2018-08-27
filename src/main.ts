@@ -102,6 +102,7 @@ interface LanguageBundle {
 
 interface VSCodeNlsConfig {
 	locale: string;
+	_languagePackSupport?: boolean;
 	_languagePackId?: string;
 	_translationsConfigFile?: string;
 	_cacheRoot?: string;
@@ -110,6 +111,7 @@ interface VSCodeNlsConfig {
 
 interface InternalOptions {
 	locale?: string;
+	languagePackSupport: boolean;
 	cacheLanguageResolution: boolean;
 	messageFormat: MessageFormat;
 	languagePackId?: string;
@@ -127,12 +129,15 @@ let options: InternalOptions;
 let isPseudo: boolean;
 
 function initializeSettings() {
-	options = { locale: undefined, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle};
+	options = { locale: undefined, languagePackSupport: false, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle};
 	if (isString(process.env.VSCODE_NLS_CONFIG)) {
 		try {
 			let vscodeOptions = JSON.parse(process.env.VSCODE_NLS_CONFIG) as VSCodeNlsConfig;
 			if (isString(vscodeOptions.locale)) {
 				options.locale = vscodeOptions.locale.toLowerCase();
+			}
+			if (isBoolean(vscodeOptions._languagePackSupport)) {
+				options.languagePackSupport = vscodeOptions._languagePackSupport;
 			}
 			if (isString(vscodeOptions._cacheRoot)) {
 				options.cacheRoot = vscodeOptions._cacheRoot;
@@ -164,7 +169,7 @@ function initializeSettings() {
 initializeSettings();
 
 function supportsLanguagePack(): boolean {
-	return options.cacheRoot !== undefined && options.languagePackId !== undefined && options.translationsConfigFile !== undefined
+	return options.languagePackSupport === true && options.cacheRoot !== undefined && options.languagePackId !== undefined && options.translationsConfigFile !== undefined
 		&& options.translationsConfig !== undefined;
 }
 
@@ -384,6 +389,15 @@ function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: strin
 	return result;
 }
 
+function loadDefaultNlsBundle(bundlePath: string): NlsBundle | undefined {
+	try {
+		return createDefaultNlsBundle(bundlePath);
+	} catch (err) {
+		console.log(`Generating default bundle from meta data failed.`, err);
+		return undefined;
+	}
+}
+
 function loadNlsBundle(header: MetadataHeader, bundlePath: string): NlsBundle | undefined {
 	let result: NlsBundle;
 
@@ -396,6 +410,12 @@ function loadNlsBundle(header: MetadataHeader, bundlePath: string): NlsBundle | 
 		}
 	}
 	if (!result) {
+		// No language pack found, but core is running in language pack mode
+		// Don't try to use old in the box bundles since the might be stale
+		// Fall right back to the default bundle.
+		if (options.languagePackSupport) {
+			return loadDefaultNlsBundle(bundlePath);
+		}
 		let candidate = findInTheBoxBundle(bundlePath);
 		if (candidate) {
 			try {
@@ -404,12 +424,7 @@ function loadNlsBundle(header: MetadataHeader, bundlePath: string): NlsBundle | 
 				console.log(`Loading in the box message bundle failed.`, err);
 			}
 		}
-		try {
-			result = createDefaultNlsBundle(bundlePath);
-		} catch (err) {
-			console.log(`Generating default bundle from meta data failed.`, err);
-			result = undefined;
-		}
+		result = loadDefaultNlsBundle(bundlePath);
 	}
 	return result;
 }
