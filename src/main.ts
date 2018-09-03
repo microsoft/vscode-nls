@@ -25,6 +25,10 @@ function isBoolean(value: any): value is boolean {
 	return value === true || value === false;
 }
 
+function readJsonFileSync<T = any>(filename: string): T {
+	return JSON.parse(fs.readFileSync(filename, 'utf8')) as T;
+}
+
 export enum MessageFormat {
 	file = 'file',
 	bundle = 'bundle',
@@ -148,8 +152,8 @@ function initializeSettings() {
 			if (isString(vscodeOptions._translationsConfigFile)) {
 				options.translationsConfigFile = vscodeOptions._translationsConfigFile;
 				try {
-					options.translationsConfig = require(options.translationsConfigFile);
-				} catch(error) {
+					options.translationsConfig = readJsonFileSync(options.translationsConfigFile);
+				} catch (error) {
 					// We can't read the translation config file. Mark the cache as corrupted.
 					if (vscodeOptions._corruptedFile) {
 						fs.writeFile(vscodeOptions._corruptedFile, 'corrupted', 'utf8', (err) => {
@@ -292,7 +296,7 @@ function mkdir(directory: string) {
 }
 
 function createDefaultNlsBundle(folder: string): NlsBundle {
-	let metaData: MetaDataFile = require(path.join(folder, 'nls.metadata.json'));
+	let metaData: MetaDataFile = readJsonFileSync(path.join(folder, 'nls.metadata.json'));
 	let result: NlsBundle = Object.create(null);
 	for (let module in metaData) {
 		let entry = metaData[module];
@@ -306,8 +310,8 @@ function createNLSBundle(header: MetadataHeader, metaDataPath: string): NlsBundl
 	if (!languagePackLocation) {
 		return undefined;
 	}
-	let languagePack: I18nBundle = require(languagePackLocation).contents;
-	let metaData: MetaDataFile = require(path.join(metaDataPath, 'nls.metadata.json'));
+	let languagePack: I18nBundle = readJsonFileSync(languagePackLocation).contents;
+	let metaData: MetaDataFile = readJsonFileSync(path.join(metaDataPath, 'nls.metadata.json'));
 	let result: NlsBundle = Object.create(null);
 	for (let module in metaData) {
 		let entry = metaData[module];
@@ -419,7 +423,7 @@ function loadNlsBundle(header: MetadataHeader, bundlePath: string): NlsBundle | 
 		let candidate = findInTheBoxBundle(bundlePath);
 		if (candidate) {
 			try {
-				return require(candidate);
+				return readJsonFileSync(candidate);
 			} catch (err) {
 				console.log(`Loading in the box message bundle failed.`, err);
 			}
@@ -496,7 +500,7 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 	if (options.messageFormat === MessageFormat.both || options.messageFormat === MessageFormat.file) {
 		// Try to load a single file bundle
 		try {
-			let json: SingleFileJsonFormat = require(resolveLanguage(file));
+			let json: SingleFileJsonFormat = readJsonFileSync(resolveLanguage(file));
 			if (Array.isArray(json)) {
 				return createScopedLocalizeFunction(json);
 			} else {
@@ -529,7 +533,7 @@ export function config(opts?: Options): LoadFunc {
 			resolvedBundles = Object.create(null);
 		}
 		if (opts.messageFormat !== undefined) {
-			options.messageFormat = opts.messageFormat;
+			options.messageFormat = opts.messageFormat;``
 		}
 	}
 	isPseudo = options.locale === 'pseudo';
