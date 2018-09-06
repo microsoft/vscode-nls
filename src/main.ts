@@ -54,8 +54,8 @@ namespace LocalizeInfo {
 }
 
 export interface LocalizeFunc {
-	(info: LocalizeInfo, message: string, ...args: any[]): string;
-	(key: string, message: string, ...args: any[]): string;
+	(info: LocalizeInfo, message: string, ...args: (string | number | boolean | undefined | null)[]): string;
+	(key: string, message: string, ...args: (string | number | boolean | undefined | null)[]): string;
 }
 
 export interface LoadFunc {
@@ -190,7 +190,14 @@ function format(message: string, args: any[]): string {
 	} else {
 		result = message.replace(/\{(\d+)\}/g, (match, rest) => {
 			let index = rest[0];
-			return typeof args[index] !== 'undefined' ? args[index] : match;
+			let arg = args[index];
+			let replaced = match;
+			if (typeof arg === 'string') {
+				replaced = arg;
+			} else if (typeof arg === 'number' || typeof arg === 'boolean' || arg === void 0 || arg === null) {
+				replaced = String(arg);
+			}
+			return replaced;
 		});
 	}
 	return result;

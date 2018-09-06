@@ -38,6 +38,11 @@ During development time the strings in the code are presented to the user. If th
 
 ## History
 
+### 4.0.0
+
+* make vscode-nls webpack friendly (removal of require calls)
+* narrow type for var args in `localize` function to `string | number | boolean | null | undefined`
+
 ### 3.0.0:
 
 * added support to bundle the strings into a single `nls.bundle(.${locale})?.json` file.
