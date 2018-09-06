@@ -191,13 +191,13 @@ function format(message: string, args: any[]): string {
 		result = message.replace(/\{(\d+)\}/g, (match, rest) => {
 			let index = rest[0];
 			let arg = args[index];
-			let replaced = match;
+			let replacement = match;
 			if (typeof arg === 'string') {
-				replaced = arg;
+				replacement = arg;
 			} else if (typeof arg === 'number' || typeof arg === 'boolean' || arg === void 0 || arg === null) {
-				replaced = String(arg);
+				replacement = String(arg);
 			}
-			return replaced;
+			return replacement;
 		});
 	}
 	return result;
