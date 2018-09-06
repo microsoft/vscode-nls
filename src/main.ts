@@ -133,7 +133,7 @@ let options: InternalOptions;
 let isPseudo: boolean;
 
 function initializeSettings() {
-	options = { locale: undefined, languagePackSupport: false, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle};
+	options = { locale: undefined, languagePackSupport: false, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle };
 	if (isString(process.env.VSCODE_NLS_CONFIG)) {
 		try {
 			let vscodeOptions = JSON.parse(process.env.VSCODE_NLS_CONFIG) as VSCodeNlsConfig;
@@ -178,7 +178,7 @@ function supportsLanguagePack(): boolean {
 }
 
 function format(message: string, args: any[]): string {
-	let result:string;
+	let result: string;
 
 	if (isPseudo) {
 		// FF3B and FF3D is the Unicode zenkaku representation for [ and ]
@@ -198,7 +198,7 @@ function format(message: string, args: any[]): string {
 
 
 function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
-	return function(key: any, message: string, ...args: any[]): string {
+	return function (key: any, message: string, ...args: any[]): string {
 		if (isNumber(key)) {
 			if (key >= messages.length) {
 				console.error(`Broken localize call found. Index out of bounds. Stacktrace is\n: ${(<any>new Error('')).stack}`);
@@ -230,7 +230,7 @@ function resolveLanguage(file: string): string {
 		} else {
 			let locale = options.locale;
 			while (locale) {
-				var candidate = '.nls.' + locale + '.json' ;
+				var candidate = '.nls.' + locale + '.json';
 				if (fs.existsSync(file + candidate)) {
 					resolvedLanguage = candidate;
 					break;
@@ -305,7 +305,7 @@ function createDefaultNlsBundle(folder: string): NlsBundle {
 	return result;
 }
 
-function createNLSBundle(header: MetadataHeader, metaDataPath: string): NlsBundle  | undefined {
+function createNLSBundle(header: MetadataHeader, metaDataPath: string): NlsBundle | undefined {
 	let languagePackLocation = options.translationsConfig[header.id];
 	if (!languagePackLocation) {
 		return undefined;
@@ -436,7 +436,7 @@ function loadNlsBundle(header: MetadataHeader, bundlePath: string): NlsBundle | 
 function tryFindMetaDataHeaderFile(file: string): string {
 	let result: string;
 	let dirname = path.dirname(file);
-	while(true) {
+	while (true) {
 		result = path.join(dirname, 'nls.metadata.header.json');
 		if (fs.existsSync(result)) {
 			break;
@@ -489,7 +489,7 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 				let messages = bundle.nlsBundle[module];
 				if (messages === undefined) {
 					console.error(`Messages for file ${file} not found. See console for details.`);
-					return function(): string {
+					return function (): string {
 						return 'Messages not found.';
 					}
 				}
@@ -520,7 +520,7 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 		}
 	}
 	console.error(`Failed to load message bundle for file ${file}`);
-	return function(): string {
+	return function (): string {
 		return 'Failed to load message bundle. See console for details.';
 	};
 }
@@ -533,7 +533,7 @@ export function config(opts?: Options): LoadFunc {
 			resolvedBundles = Object.create(null);
 		}
 		if (opts.messageFormat !== undefined) {
-			options.messageFormat = opts.messageFormat;``
+			options.messageFormat = opts.messageFormat;
 		}
 	}
 	isPseudo = options.locale === 'pseudo';
