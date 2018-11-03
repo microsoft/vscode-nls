@@ -19,7 +19,7 @@ console.log(localize('keyOne', "Hello World"));
 console.log(localize('keyTwo', "Current Date {0}", Date.now()));
 ```
 
-The `config` call configures the nls module and should only be called once in the applications entry point. You pass in the locale you want to use and whether the resolved locale should be cached for all further calls. The config call returns a function which is used to load a message bundle. During development time the argument should stay empty. There is another tool that helps extracting the message from your sources and it creates the message bundles autmatically for you. The tool is available [here](https://github.com/Microsoft/vscode-nls-dev).
+The `config` call configures the nls module and should only be called once in the applications entry point. You pass in the locale you want to use and whether the resolved locale should be cached for all further calls. The config call returns a function which is used to load a message bundle. During development time the argument should stay empty. There is another tool that helps extracting the message from your sources and it creates the message bundles automatically for you. The tool is available [here](https://github.com/Microsoft/vscode-nls-dev).
 
 In secondary modules loaded from the 'main' module no configuration is necessary. However you still need to load the nls module and load the message bundle. This looks like this:
 
