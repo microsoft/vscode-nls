@@ -56,6 +56,7 @@ namespace LocalizeInfo {
 export interface LocalizeFunc {
 	(info: LocalizeInfo, message: string, ...args: (string | number | boolean | undefined | null)[]): string;
 	(key: string, message: string, ...args: (string | number | boolean | undefined | null)[]): string;
+	(key: number): string;
 }
 
 export interface LoadFunc {
@@ -205,7 +206,7 @@ function format(message: string, args: any[]): string {
 
 
 function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
-	return function (key: any, message: string, ...args: any[]): string {
+	return function (key: any, message?: string, ...args: any[]): string {
 		if (isNumber(key)) {
 			if (key >= messages.length) {
 				console.error(`Broken localize call found. Index out of bounds. Stacktrace is\n: ${(<any>new Error('')).stack}`);
@@ -223,7 +224,7 @@ function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
 	}
 }
 
-function localize(key: string | LocalizeInfo, message: string, ...args: any[]): string {
+function localize(key: string | number | LocalizeInfo, message?: string, ...args: any[]): string {
 	return format(message, args);
 }
 
