@@ -38,6 +38,10 @@ During development time the strings in the code are presented to the user. If th
 
 ## History
 
+### 4.1.0
+
+* support language and locale when resolving options from `VSCODE_NLS_CONFIG` setting.
+
 ### 4.0.0
 
 * make vscode-nls webpack friendly (removal of require calls)

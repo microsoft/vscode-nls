@@ -106,6 +106,9 @@ interface LanguageBundle {
 
 interface VSCodeNlsConfig {
 	locale: string;
+	availableLanguages: {
+		[pack: string]: string;
+	};
 	_languagePackSupport?: boolean;
 	_languagePackId?: string;
 	_translationsConfigFile?: string;
@@ -114,7 +117,8 @@ interface VSCodeNlsConfig {
 }
 
 interface InternalOptions {
-	locale?: string;
+	locale: string | undefined;
+	language: string | undefined;
 	languagePackSupport: boolean;
 	cacheLanguageResolution: boolean;
 	messageFormat: MessageFormat;
@@ -133,13 +137,27 @@ let options: InternalOptions;
 let isPseudo: boolean;
 
 function initializeSettings() {
-	options = { locale: undefined, languagePackSupport: false, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle };
+	options = { locale: undefined, language: undefined, languagePackSupport: false, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle };
 	if (isString(process.env.VSCODE_NLS_CONFIG)) {
 		try {
 			let vscodeOptions = JSON.parse(process.env.VSCODE_NLS_CONFIG) as VSCodeNlsConfig;
+			let language: string | undefined;
+			let locale: string | undefined
+			if (vscodeOptions.availableLanguages) {
+				let value = vscodeOptions.availableLanguages['*'];
+				if (isString(value)) {
+					language = value;
+				}
+			}
 			if (isString(vscodeOptions.locale)) {
 				options.locale = vscodeOptions.locale.toLowerCase();
 			}
+			if (language === undefined) {
+				options.language = options.locale;
+			} else if (language !== 'en') {
+				options.language = language
+			}
+
 			if (isBoolean(vscodeOptions._languagePackSupport)) {
 				options.languagePackSupport = vscodeOptions._languagePackSupport;
 			}
@@ -232,10 +250,10 @@ function resolveLanguage(file: string): string {
 	if (options.cacheLanguageResolution && resolvedLanguage) {
 		resolvedLanguage = resolvedLanguage;
 	} else {
-		if (isPseudo || !options.locale) {
+		if (isPseudo || !options.language) {
 			resolvedLanguage = '.nls.json';
 		} else {
-			let locale = options.locale;
+			let locale = options.language;
 			while (locale) {
 				var candidate = '.nls.' + locale + '.json';
 				if (fs.existsSync(file + candidate)) {
@@ -260,22 +278,22 @@ function resolveLanguage(file: string): string {
 }
 
 function findInTheBoxBundle(root: string): string | undefined {
-	let locale = options.locale;
-	while (locale) {
-		let candidate = path.join(root, `nls.bundle.${locale}.json`);
+	let language = options.language;
+	while (language) {
+		let candidate = path.join(root, `nls.bundle.${language}.json`);
 		if (fs.existsSync(candidate)) {
 			return candidate;
 		} else {
-			let index = locale.lastIndexOf('-');
+			let index = language.lastIndexOf('-');
 			if (index > 0) {
-				locale = locale.substring(0, index);
+				language = language.substring(0, index);
 			} else {
-				locale = undefined;
+				language = undefined;
 			}
 		}
 	}
 	// Test if we can reslove the default bundle.
-	if (locale === undefined) {
+	if (language === undefined) {
 		let candidate = path.join(root, 'nls.bundle.json');
 		if (fs.existsSync(candidate)) {
 			return candidate;
@@ -536,6 +554,7 @@ export function config(opts?: Options): LoadFunc {
 	if (opts) {
 		if (isString(opts.locale)) {
 			options.locale = opts.locale.toLowerCase();
+			options.language = options.locale;
 			resolvedLanguage = undefined;
 			resolvedBundles = Object.create(null);
 		}
