@@ -35,10 +35,17 @@ export enum MessageFormat {
 	both = 'both'
 }
 
+export enum BundleFormat {
+	// the nls.bundle format
+	standalone = 'standalone',
+	languagePack = 'languagePack'
+}
+
 export interface Options {
 	locale?: string;
 	cacheLanguageResolution?: boolean;
 	messageFormat?: MessageFormat;
+	bundleFormat?: BundleFormat;
 }
 
 export interface LocalizeInfo {
@@ -560,6 +567,9 @@ export function config(opts?: Options): LoadFunc {
 		}
 		if (opts.messageFormat !== undefined) {
 			options.messageFormat = opts.messageFormat;
+		}
+		if (opts.bundleFormat === BundleFormat.standalone && options.languagePackSupport === true) {
+			options.languagePackSupport = false;
 		}
 	}
 	isPseudo = options.locale === 'pseudo';
