@@ -1,6 +1,6 @@
 {
 	"name": "vscode-nls",
-	"version": "4.1.0",
+	"version": "4.1.1",
 	"description": "NPM module to externalize and localize VSCode extensions",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
