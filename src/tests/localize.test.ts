@@ -54,7 +54,7 @@ describe('Localize', () => {
 	});
 
 	it('External Data German flat with extension separate load', () => {
-		nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })
+		nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file });
 		let localize:any = nls.loadMessageBundle(path.join(root, 'data.js'));
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});

@@ -138,7 +138,7 @@ interface InternalOptions {
 let resolvedLanguage: string;
 let resolvedBundles: {
 	[Key: string]: LanguageBundle | null;
-}
+};
 
 let options: InternalOptions;
 let isPseudo: boolean;
@@ -149,7 +149,7 @@ function initializeSettings() {
 		try {
 			let vscodeOptions = JSON.parse(process.env.VSCODE_NLS_CONFIG) as VSCodeNlsConfig;
 			let language: string | undefined;
-			let locale: string | undefined
+			let locale: string | undefined;
 			if (vscodeOptions.availableLanguages) {
 				let value = vscodeOptions.availableLanguages['*'];
 				if (isString(value)) {
@@ -162,7 +162,7 @@ function initializeSettings() {
 			if (language === undefined) {
 				options.language = options.locale;
 			} else if (language !== 'en') {
-				options.language = language
+				options.language = language;
 			}
 
 			if (isBoolean(vscodeOptions._languagePackSupport)) {
@@ -181,8 +181,13 @@ function initializeSettings() {
 				} catch (error) {
 					// We can't read the translation config file. Mark the cache as corrupted.
 					if (vscodeOptions._corruptedFile) {
-						fs.writeFile(vscodeOptions._corruptedFile, 'corrupted', 'utf8', (err) => {
-							console.error(err);
+						const dirname = path.dirname(vscodeOptions._corruptedFile);
+						fs.exists(dirname, (exists) => {
+							if (exists) {
+								fs.writeFile(vscodeOptions._corruptedFile, 'corrupted', 'utf8', (err) => {
+									console.error(err);
+								});
+							}
 						});
 					}
 				}
@@ -245,7 +250,7 @@ function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
 				console.error(`Broken localize call found. Stacktrace is\n: ${(<any>new Error('')).stack}`);
 			}
 		}
-	}
+	};
 }
 
 function localize(key: string | LocalizeInfo, message: string, ...args: any[]): string {
@@ -380,7 +385,7 @@ function cacheBundle(key: string, bundle: LanguageBundle | null): LanguageBundle
 }
 
 function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: string): NlsBundle | undefined {
-	let result: NlsBundle
+	let result: NlsBundle;
 
 	let bundle = path.join(options.cacheRoot, `${header.id}-${header.hash}.json`);
 	let useMemoryOnly: boolean = false;
@@ -523,7 +528,7 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 					console.error(`Messages for file ${file} not found. See console for details.`);
 					return function (): string {
 						return 'Messages not found.';
-					}
+					};
 				}
 				return createScopedLocalizeFunction(messages);
 			}
