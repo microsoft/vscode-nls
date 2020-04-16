@@ -3,7 +3,8 @@ lib/tests/
 lib/*.map
 src/
 test/
-.eslintrc
+.mocharc*
+.eslintrc*
 .gitignore
 .npmignore
 .travis.yml
