@@ -29,5 +29,8 @@
 		"clean": "rimraf lib",
 		"test": "mocha",
 		"lint": "eslint --config .eslintrc.json ./src/**/*.ts"
+	},
+	"browser": {
+		"fs": false
 	}
 }
