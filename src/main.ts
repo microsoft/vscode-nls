@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 const toString = Object.prototype.toString;
+const readFileSync = fs.readFileSync;
 
 function isDefined(value: any): boolean {
 	return typeof value !== 'undefined';
@@ -26,7 +27,7 @@ function isBoolean(value: any): value is boolean {
 }
 
 function readJsonFileSync<T = any>(filename: string): T {
-	return JSON.parse(fs.readFileSync(filename, 'utf8')) as T;
+	return JSON.parse(readFileSync(filename, 'utf8')) as T;
 }
 
 export enum MessageFormat {
@@ -391,7 +392,7 @@ function loadNlsBundleOrCreateFromI18n(header: MetadataHeader, bundlePath: strin
 	let useMemoryOnly: boolean = false;
 	let writeBundle: boolean = false;
 	try {
-		result = JSON.parse(fs.readFileSync(bundle, { encoding: 'utf8', flag: 'r' }));
+		result = JSON.parse(readFileSync(bundle, { encoding: 'utf8', flag: 'r' }));
 		touch(bundle);
 		return result;
 	} catch (err) {
@@ -490,9 +491,8 @@ function tryFindMetaDataHeaderFile(file: string): string {
 }
 
 export function loadMessageBundle(file?: string): LocalizeFunc {
-	if (!file) {
-		// No file. We are in dev mode. Return the default
-		// localize function.
+	if (!file || !readFileSync) {
+		// No file, or fs is not available (bundler empty mock). We are in dev mode.
 		return localize;
 	}
 	// Remove extension since we load json files.
@@ -508,7 +508,7 @@ export function loadMessageBundle(file?: string): LocalizeFunc {
 			let bundle: LanguageBundle = resolvedBundles[bundlePath];
 			if (bundle === undefined) {
 				try {
-					let header: MetadataHeader = JSON.parse(fs.readFileSync(headerFile, 'utf8'));
+					let header: MetadataHeader = JSON.parse(readFileSync(headerFile, 'utf8'));
 					try {
 						let nlsBundle = loadNlsBundle(header, bundlePath);
 						bundle = cacheBundle(bundlePath, nlsBundle ? { header, nlsBundle } : null);
