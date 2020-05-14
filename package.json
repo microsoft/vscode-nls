@@ -12,7 +12,8 @@
 		"url": "https://github.com/Microsoft/vscode-nls/issues"
 	},
 	"main": "./lib/main.js",
-	"typings": "./lib/main",
+	"typings": "./lib/main.d.ts",
+	"browser": "./lib/main-browser.js",
 	"devDependencies": {
 		"@types/node": "^12.12.29",
 		"@types/mocha": "^7.0.2",
@@ -29,8 +30,5 @@
 		"clean": "rimraf lib",
 		"test": "mocha",
 		"lint": "eslint --config .eslintrc.json ./src/**/*.ts"
-	},
-	"browser": {
-		"fs": false
 	}
 }
