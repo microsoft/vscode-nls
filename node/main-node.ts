@@ -13,7 +13,6 @@ import {
 	MessageFormat,
 	BundleFormat,
 	Options,
-	LocalizeInfo,
 	TranslationConfig,
 	LanguageBundle,
 	LocalizeFunc,
@@ -23,9 +22,9 @@ import {
 	I18nBundle,
 	SingleFileJsonFormat,
 	LoadFunc
-} from './common';
+} from '../common/common';
 
-export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from './common';
+export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
 
 const toString = Object.prototype.toString;
 

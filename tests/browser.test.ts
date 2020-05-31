@@ -5,8 +5,8 @@
 
 import * as assert from 'assert';
 
-import * as nls from '../main';
-import * as nlsBrowser from '../main-browser';
+import * as nls from '../node/main-node';
+import * as nlsBrowser from '../browser/main-browser';
 
 describe('library', () => {
 	it('exports same symbol names in both entry points', () => {

@@ -1,0 +1,13 @@
+{
+    "extends": "../tsconfig.base.json",
+    "compilerOptions": {
+        "lib": [
+            "es5",
+            "dom"
+        ],
+        "outDir": "../lib/browser"
+    },
+    "references": [
+        {"path": "../common/tsconfig.json"}
+    ]
+}
