@@ -2,16 +2,31 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-'use strict';
-
 import * as path from 'path';
 import * as fs from 'fs';
+import {
+	format,
+	localize,
+	isDefined,
+	setPseudo,
+	isPseudo,
+	MessageFormat,
+	BundleFormat,
+	Options,
+	TranslationConfig,
+	LanguageBundle,
+	LocalizeFunc,
+	NlsBundle,
+	MetaDataFile,
+	MetadataHeader,
+	I18nBundle,
+	SingleFileJsonFormat,
+	LoadFunc
+} from '../common/common';
+
+export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
 
 const toString = Object.prototype.toString;
-
-function isDefined(value: any): boolean {
-	return typeof value !== 'undefined';
-}
 
 function isNumber(value: any): value is number {
 	return toString.call(value) === '[object Number]';
@@ -27,88 +42,6 @@ function isBoolean(value: any): value is boolean {
 
 function readJsonFileSync<T = any>(filename: string): T {
 	return JSON.parse(fs.readFileSync(filename, 'utf8')) as T;
-}
-
-export enum MessageFormat {
-	file = 'file',
-	bundle = 'bundle',
-	both = 'both'
-}
-
-export enum BundleFormat {
-	// the nls.bundle format
-	standalone = 'standalone',
-	languagePack = 'languagePack'
-}
-
-export interface Options {
-	locale?: string;
-	cacheLanguageResolution?: boolean;
-	messageFormat?: MessageFormat;
-	bundleFormat?: BundleFormat;
-}
-
-export interface LocalizeInfo {
-	key: string;
-	comment: string[];
-}
-
-namespace LocalizeInfo {
-	export function is(value: any): value is LocalizeInfo {
-		let candidate = value as LocalizeInfo;
-		return candidate && isDefined(candidate.key) && isDefined(candidate.comment);
-	}
-}
-
-export interface LocalizeFunc {
-	(info: LocalizeInfo, message: string, ...args: (string | number | boolean | undefined | null)[]): string;
-	(key: string, message: string, ...args: (string | number | boolean | undefined | null)[]): string;
-}
-
-export interface LoadFunc {
-	(file?: string): LocalizeFunc;
-}
-
-interface NlsBundle {
-	[key: string]: string[];
-}
-
-type SingleFileJsonFormat = string[] | { messages: string[]; keys: string[]; };
-
-export type KeyInfo = string | LocalizeInfo;
-
-interface MetaDataEntry {
-	messages: string[];
-	keys: KeyInfo[];
-}
-
-interface MetadataHeader {
-	id: string;
-	type: string;
-	hash: string;
-	outDir: string;
-}
-
-interface MetaDataFile {
-	[key: string]: MetaDataEntry;
-}
-
-interface TranslationConfig {
-	[extension: string]: string;
-}
-
-interface I18nBundle {
-	version: string,
-	contents: {
-		[module: string]: {
-			[messageKey: string]: string;
-		};
-	}
-}
-
-interface LanguageBundle {
-	header: MetadataHeader;
-	nlsBundle: NlsBundle;
 }
 
 interface VSCodeNlsConfig {
@@ -135,13 +68,11 @@ interface InternalOptions {
 	cacheRoot?: string;
 }
 
-let resolvedLanguage: string;
 let resolvedBundles: {
 	[Key: string]: LanguageBundle | null;
 };
 
 let options: InternalOptions;
-let isPseudo: boolean;
 
 function initializeSettings() {
 	options = { locale: undefined, language: undefined, languagePackSupport: false, cacheLanguageResolution: true, messageFormat: MessageFormat.bundle };
@@ -149,7 +80,6 @@ function initializeSettings() {
 		try {
 			let vscodeOptions = JSON.parse(process.env.VSCODE_NLS_CONFIG) as VSCodeNlsConfig;
 			let language: string | undefined;
-			let locale: string | undefined;
 			if (vscodeOptions.availableLanguages) {
 				let value = vscodeOptions.availableLanguages['*'];
 				if (isString(value)) {
@@ -196,8 +126,7 @@ function initializeSettings() {
 			// Do nothing.
 		}
 	}
-	isPseudo = options.locale === 'pseudo';
-	resolvedLanguage = undefined;
+	setPseudo(options.locale === 'pseudo');
 	resolvedBundles = Object.create(null);
 }
 initializeSettings();
@@ -206,33 +135,6 @@ function supportsLanguagePack(): boolean {
 	return options.languagePackSupport === true && options.cacheRoot !== undefined && options.languagePackId !== undefined && options.translationsConfigFile !== undefined
 		&& options.translationsConfig !== undefined;
 }
-
-function format(message: string, args: any[]): string {
-	let result: string;
-
-	if (isPseudo) {
-		// FF3B and FF3D is the Unicode zenkaku representation for [ and ]
-		message = '\uFF3B' + message.replace(/[aouei]/g, '$&$&') + '\uFF3D';
-	}
-
-	if (args.length === 0) {
-		result = message;
-	} else {
-		result = message.replace(/\{(\d+)\}/g, (match, rest) => {
-			let index = rest[0];
-			let arg = args[index];
-			let replacement = match;
-			if (typeof arg === 'string') {
-				replacement = arg;
-			} else if (typeof arg === 'number' || typeof arg === 'boolean' || arg === void 0 || arg === null) {
-				replacement = String(arg);
-			}
-			return replacement;
-		});
-	}
-	return result;
-}
-
 
 function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
 	return function (key: any, message: string, ...args: any[]): string {
@@ -253,9 +155,6 @@ function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
 	};
 }
 
-function localize(key: string | LocalizeInfo, message: string, ...args: any[]): string {
-	return format(message, args);
-}
 
 function resolveLanguage(file: string): string {
 	let resolvedLanguage: string;
@@ -567,7 +466,6 @@ export function config(opts?: Options): LoadFunc {
 		if (isString(opts.locale)) {
 			options.locale = opts.locale.toLowerCase();
 			options.language = options.locale;
-			resolvedLanguage = undefined;
 			resolvedBundles = Object.create(null);
 		}
 		if (opts.messageFormat !== undefined) {
@@ -577,6 +475,6 @@ export function config(opts?: Options): LoadFunc {
 			options.languagePackSupport = false;
 		}
 	}
-	isPseudo = options.locale === 'pseudo';
+	setPseudo(options.locale === 'pseudo');
 	return loadMessageBundle;
 }

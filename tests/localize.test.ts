@@ -7,9 +7,9 @@
 import * as assert from 'assert';
 import * as path from 'path';
 
-import * as nls from '../main';
+import * as nls from '../node/main-node';
 
-let root = path.join(__dirname, '..', '..' , 'src', 'tests');
+let root = path.join(__dirname, '..', '..' , 'tests');
 
 describe('Localize', () => {
 	it('Simple call', () => {
