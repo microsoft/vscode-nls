@@ -25,8 +25,8 @@
 	},
 	"scripts": {
 		"prepublishOnly": "npm run lint && npm run test",
-		"build": "tsc --build",
-		"watch": "npm run build -- -w",
+		"compile": "tsc -b ./tsconfig.json",
+		"watch": "tsc -b ./tsconfig.json -w",
 		"clean": "rimraf lib",
 		"pretest": "npm run build",
 		"test": "mocha",
