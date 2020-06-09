@@ -5,11 +5,11 @@
 
 import * as assert from 'assert';
 
-import * as nls from '../node/main-node';
-import * as nlsBrowser from '../browser/main-browser';
+import * as nls from '../../node';
+import * as nlsBrowser from '../../browser';
 
-describe('library', () => {
-	it('exports same symbol names in both entry points', () => {
+describe('API', () => {
+	it('Exports same symbol names in both browser and node entry points', () => {
 		assert.deepEqual(Object.keys(nls), Object.keys(nlsBrowser));
 	});
 });

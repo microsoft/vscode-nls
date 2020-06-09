@@ -11,9 +11,11 @@
 	"bugs": {
 		"url": "https://github.com/Microsoft/vscode-nls/issues"
 	},
-	"main": "./lib/node/main-node.js",
-	"typings": "./lib/node/main-node.d.ts",
-	"browser": "./lib/browser/main-browser.js",
+	"main": "./lib/node/main.js",
+	"browser": {
+		"./lib/node/main.js": "./lib/browser/main.js"
+	},
+	"typings": "./lib/common/common.d.ts",
 	"devDependencies": {
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.29",
@@ -28,7 +30,7 @@
 		"compile": "tsc -b ./tsconfig.json",
 		"watch": "tsc -b ./tsconfig.json -w",
 		"clean": "rimraf lib",
-		"pretest": "npm run build",
+		"pretest": "npm run compile",
 		"test": "mocha",
 		"lint": "eslint --config .eslintrc.json ./**/*.ts"
 	},

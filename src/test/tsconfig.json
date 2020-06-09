@@ -1,14 +1,14 @@
 {
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "outDir": "../../lib/tests",
+        "outDir": "../../lib/test",
         "types": [
             "node",
             "mocha"
         ]
     },
     "references": [
-        {"path": "../browser/tsconfig.json"},
-        {"path": "../node/tsconfig.json"}
+        { "path": "../browser/tsconfig.json" },
+        { "path": "../node/tsconfig.json" }
     ]
 }
