@@ -4,24 +4,10 @@
  * ------------------------------------------------------------------------------------------ */
 import * as path from 'path';
 import * as fs from 'fs';
+
 import {
-	format,
-	localize,
-	isDefined,
-	setPseudo,
-	isPseudo,
-	MessageFormat,
-	BundleFormat,
-	Options,
-	TranslationConfig,
-	LanguageBundle,
-	LocalizeFunc,
-	NlsBundle,
-	MetaDataFile,
-	MetadataHeader,
-	I18nBundle,
-	SingleFileJsonFormat,
-	LoadFunc
+	format, localize, isDefined, setPseudo, isPseudo, MessageFormat, BundleFormat, Options, TranslationConfig, LanguageBundle, LocalizeFunc,
+	NlsBundle, MetaDataFile, MetadataHeader, I18nBundle, SingleFileJsonFormat, LoadFunc
 } from '../common/common';
 
 export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';

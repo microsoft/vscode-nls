@@ -30,7 +30,6 @@
 		"compile": "tsc -b ./tsconfig.json",
 		"watch": "tsc -b ./tsconfig.json -w",
 		"clean": "rimraf lib",
-		"pretest": "npm run compile",
 		"test": "mocha",
 		"lint": "eslint --config .eslintrc.json ./**/*.ts"
 	},

@@ -1,10 +1,16 @@
-import { setPseudo, localize, Options } from '../common/common';
+import { setPseudo, localize, Options, LocalizeInfo } from '../common/common';
 
 export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
 
 
 export function loadMessageBundle(_file?: string) {
-	return localize;
+	return function (key: string | number | LocalizeInfo, message: string, ...args: any[]): string {
+		if (typeof key === 'number') {
+			throw new Error(`Browser implementation does currently not support externalized strings.`);
+		} else {
+			return localize(key, message, ...args);
+		}
+	};
 }
 
 export function config(options?: Options) {
