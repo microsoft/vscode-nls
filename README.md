@@ -38,6 +38,10 @@ During development time the strings in the code are presented to the user. If th
 
 ## History
 
+### 5.0.0-next.1
+
+* Split code into common, node and browser to support using vscode-nls in a Web browser. This is a breaking change and need adoption since the default exports of the module are only exporting the common types. To import the node specific part use `vscode-nls\node`. To use the browser specific part import `vscode-nls\browser`.
+
 ### 4.1.1
 
 * Fixes [Bundled nls doesn't work](https://github.com/microsoft/vscode-nls/issues/23)
