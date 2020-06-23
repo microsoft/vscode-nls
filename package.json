@@ -15,7 +15,6 @@
 	"browser": {
 		"./lib/node/main.js": "./lib/browser/main.js"
 	},
-	"typings": "./lib/common/common.d.ts",
 	"devDependencies": {
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.29",
