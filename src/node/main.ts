@@ -2,8 +2,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
+
 import * as path from 'path';
 import * as fs from 'fs';
+
+import RAL from '../common/ral';
 
 import {
 	format, localize, isDefined, setPseudo, isPseudo, MessageFormat, BundleFormat, Options, TranslationConfig, LanguageBundle, LocalizeFunc,
@@ -464,3 +467,8 @@ export function config(opts?: Options): LoadFunc {
 	setPseudo(options.locale === 'pseudo');
 	return loadMessageBundle;
 }
+
+RAL.install(Object.freeze<RAL>({
+	loadMessageBundle: loadMessageBundle,
+	config: config
+}));

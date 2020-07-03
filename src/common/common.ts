@@ -1,3 +1,10 @@
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+import RAL from './ral';
+
 export enum MessageFormat {
 	file = 'file',
 	bundle = 'bundle',
@@ -118,4 +125,12 @@ export function format(message: string, args: any[]): string {
 
 export function localize(_key: string | LocalizeInfo, message: string, ...args: any[]): string {
 	return format(message, args);
+}
+
+export function loadMessageBundle(file?: string): LocalizeFunc {
+	return RAL().loadMessageBundle(file);
+}
+
+export function config(opts?: Options): LoadFunc {
+	return RAL().config(opts);
 }
