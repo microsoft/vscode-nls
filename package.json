@@ -1,6 +1,6 @@
 {
 	"name": "vscode-nls",
-	"version": "5.0.0-next.1",
+	"version": "5.0.0-next.2",
 	"description": "NPM module to externalize and localize VSCode extensions",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
@@ -34,11 +34,14 @@
 		"lint": "eslint --config .eslintrc.json ./**/*.ts"
 	},
 	"files": [
-		"common",
-		"browser",
-		"node",
 		"lib/common",
 		"lib/browser",
-		"lib/node"
+		"lib/node",
+		"!lib/*/test",
+		"!lib/**/*.tsbuildinfo",
+		"node.js",
+		"node.d.ts",
+		"browser.js",
+		"browser.d.ts"
 	]
 }
