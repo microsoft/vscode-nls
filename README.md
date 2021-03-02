@@ -72,4 +72,4 @@ The browser specific part currently does only support a default language inline 
   break existing clients using TypeScript 1.8.x.
 
 ## LICENSE
-[MIT](LICENSE)
+[MIT](License.txt)
