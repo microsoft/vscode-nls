@@ -1,0 +1,8 @@
+{
+	// The root TypeScript project to index
+	"project": "./tsconfig.json",
+	// The name of the output file
+	"out": "vscode-nls.lsif",
+	// Simple. We only have a root package
+	"package": "./package.json"
+}
