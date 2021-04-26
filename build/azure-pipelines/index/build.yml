@@ -1,7 +1,3 @@
-variables:
-  - name: System.Debug
-    value: true
-
 steps:
 - task: NodeTool@0
   inputs:
@@ -17,3 +13,5 @@ steps:
   inputs:
     languages: typescript
   continueOnError: true
+  env:
+    System.Debug: true
