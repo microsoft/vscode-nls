@@ -14,4 +14,4 @@ steps:
     languages: typescript
   continueOnError: true
   env:
-    System.Debug: true
+    SYSTEM_DEBUG: true
