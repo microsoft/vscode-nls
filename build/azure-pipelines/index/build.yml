@@ -1,9 +1,6 @@
-trigger: 
-  push: ["*"]
-  pr:
-
 variables:
-  SYSTEM_DEBUG: true
+  - name: System.Debug
+    value: true
 
 steps:
 - task: NodeTool@0
