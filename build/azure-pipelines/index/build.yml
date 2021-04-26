@@ -1,3 +1,10 @@
+trigger: 
+  push: ["*"]
+  pr:
+
+variables:
+  SYSTEM_DEBUG: true
+
 steps:
 - task: NodeTool@0
   inputs:
