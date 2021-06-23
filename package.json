@@ -17,13 +17,13 @@
 	},
 	"typings": "./lib/common/common.d.ts",
 	"devDependencies": {
-		"@types/mocha": "^7.0.2",
-		"@types/node": "^12.12.29",
-		"@typescript-eslint/parser": "^4.23.0",
-		"eslint": "^7.26.0",
-		"mocha": "^7.2.0",
+		"@types/mocha": "^8.2.2",
+		"@types/node": "14.14.31",
+		"@typescript-eslint/parser": "^4.28.0",
+		"eslint": "^7.29.0",
+		"mocha": "^9.0.1",
 		"rimraf": "^3.0.2",
-		"typescript": "^3.9.3"
+		"typescript": "^4.3.4"
 	},
 	"scripts": {
 		"prepublishOnly": "npm run clean && npm run compile && npm run lint && npm run test",
