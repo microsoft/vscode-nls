@@ -20,7 +20,7 @@ export function loadMessageBundle(_file?: string) {
 }
 
 export function config(options?: Options) {
-	setPseudo(options?.locale.toLowerCase() === 'pseudo');
+	setPseudo(options?.locale?.toLowerCase() === 'pseudo');
 	return loadMessageBundle;
 }
 
