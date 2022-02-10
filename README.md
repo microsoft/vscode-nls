@@ -11,6 +11,7 @@ primary use case is for VSCode extensions.
 ## Usage
 
 ```typescript
+// This must be the first import in the main entry file
 import * as nls from 'vscode-nls';
 
 let localize = nls.config({ locale: 'de-DE' })();
@@ -24,6 +25,7 @@ The `config` call configures the nls module and should only be called once in th
 In secondary modules loaded from the 'main' module no configuration is necessary. However you still need to load the nls module and load the message bundle. This looks like this:
 
 ```typescript
+// In secondary file this import can be at random places.
 import * as nls from 'vscode-nls';
 
 let localize = nls.loadMessageBundle();
