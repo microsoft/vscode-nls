@@ -40,6 +40,11 @@ During development time the strings in the code are presented to the user. If th
 
 ## History
 
+### 5.0.1
+
+* Fixes null check in `nls.config({...})` on web. [Context in this PR by @a-stewart](https://github.com/microsoft/vscode-nls/pull/37)
+* Misc dependency upgrades
+
 ### 5.0.0
 
 * Split code into common, node and browser to support using vscode-nls in a Web browser. This is a breaking change and need adoption since the default exports of the module are only exporting the common types. To import the node specific part use `vscode-nls\node`. To use the browser specific part import `vscode-nls\browser`.
