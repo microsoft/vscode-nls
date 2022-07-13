@@ -21,9 +21,18 @@ interface InternalOptions {
 
 let options: InternalOptions;
 
-export function loadMessageBundle(_file?: string) {
-	if (nlsData?.length) {
-		return createScopedLocalizeFunction(nlsData);
+export function loadMessageBundle(file?: string) {
+	if (!file) {
+		// No file. We are in dev mode. Return the default
+		// localize function.
+		return localize;
+	}
+	// Remove extension since we load json files.
+	if (file.endsWith('.js')) {
+		file = file.substring(0, file.length - 3);
+	}
+	if (nlsData && nlsData[file]) {
+		return createScopedLocalizeFunction(nlsData[file]);
 	}
 	return function (key: string | number | LocalizeInfo, message: string, ...args: any[]): string {
 		if (typeof key === 'number') {
