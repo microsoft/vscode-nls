@@ -6,7 +6,7 @@
 import RAL from '../common/ral';
 
 import { setPseudo, localize, Options, LocalizeInfo, isString, BundleFormat, MessageFormat, isNumber, format, LocalizeFunc } from '../common/common';
-import * as nlsData from 'vscode-nls-web-data';
+import * as nlsData from './vscode-nls-web-data';
 export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
 
 interface InternalOptions {
@@ -46,20 +46,10 @@ export function loadMessageBundle(file?: string) {
 	};
 }
 
+// This API doesn't really do anything in practice because the message bundle _has_ to be loaded
+// ahead of time via 'vscode-nls-web-data'.
 export function config(opts?: Options) {
-	if (opts) {
-		if (isString(opts.locale)) {
-			options.locale = opts.locale.toLowerCase();
-			options.language = options.locale;
-		}
-		if (opts.messageFormat !== undefined) {
-			options.messageFormat = opts.messageFormat;
-		}
-		if (opts.bundleFormat === BundleFormat.standalone && options.languagePackSupport === true) {
-			options.languagePackSupport = false;
-		}
-	}
-	setPseudo(options.locale === 'pseudo');
+	setPseudo(options?.locale?.toLowerCase() === 'pseudo');
 	return loadMessageBundle;
 }
 
