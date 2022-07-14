@@ -5,8 +5,10 @@
 
 import RAL from '../common/ral';
 
-import { setPseudo, localize, Options, LocalizeInfo, isString, BundleFormat, MessageFormat, isNumber, format, LocalizeFunc } from '../common/common';
+// Requiring this file will be intercepted by VS Code and will contain actual NLS data.
 import * as nlsData from './vscode-nls-web-data';
+
+import { setPseudo, localize, Options, LocalizeInfo, isString, MessageFormat, isNumber, format, LocalizeFunc } from '../common/common';
 export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
 
 interface InternalOptions {
