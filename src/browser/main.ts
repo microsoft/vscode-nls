@@ -28,7 +28,7 @@ export function loadMessageBundle(file?: string) {
 		return localize;
 	}
 	// Remove extension since we load json files.
-	if (file.endsWith('.js')) {
+	if (file.endsWith('.js') || file.endsWith('.ts')) {
 		file = file.substring(0, file.length - 3);
 	}
 	if (nlsData && nlsData[file]) {
