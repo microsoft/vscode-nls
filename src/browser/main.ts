@@ -31,6 +31,9 @@ export function loadMessageBundle(file?: string) {
 	if (file.endsWith('.js') || file.endsWith('.ts')) {
 		file = file.substring(0, file.length - 3);
 	}
+	if (file.startsWith('/')) {
+		file = file.substring(1);
+	}
 	if (nlsData && nlsData[file]) {
 		return createScopedLocalizeFunction(nlsData[file]);
 	}
