@@ -5,11 +5,18 @@
 
 import RAL from '../common/ral';
 
-// Requiring this file will be intercepted by VS Code and will contain actual NLS data.
-import * as nlsData from './vscode-nls-web-data';
-
 import { setPseudo, localize, Options, LocalizeInfo, isString, MessageFormat, isNumber, format, LocalizeFunc } from '../common/common';
 export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
+
+let nlsData: { [key: string]: string[] };
+try {
+	// Requiring this file will be intercepted by VS Code and will contain actual NLS data.
+	// @ts-ignore
+	nlsData = require('vscode-nls-web-data');
+} catch(e) {
+	console.error('Loading vscode-nls-web-data failed. Are you running this outside of VS Code? If so, you may need to intercept the import call with your bundled NLS data.');
+	nlsData = {};
+}
 
 interface InternalOptions {
 	locale: string | undefined;
