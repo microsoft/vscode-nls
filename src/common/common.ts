@@ -21,7 +21,7 @@ export interface Options {
 export interface InjectedContext {
 	id?: string;
 	metadataHash?: string;
-	relativeFilePath: string;
+	bundleKey: string;
 }
 
 export interface LocalizeInfo {

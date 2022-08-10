@@ -49,7 +49,7 @@ describe('Localize', () => {
 			bundleFormat: nls.BundleFormat.standalone,
 			dirNameHint: root
 		})({
-			relativeFilePath: 'localize.test'
+			bundleKey: 'localize.test'
 		});
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
@@ -60,7 +60,7 @@ describe('Localize', () => {
 			bundleFormat: nls.BundleFormat.standalone,
 			dirNameHint: root
 		})({
-			relativeFilePath: 'localize.test'
+			bundleKey: 'localize.test'
 		});
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
@@ -71,7 +71,7 @@ describe('Localize', () => {
 			bundleFormat: nls.BundleFormat.standalone,
 			dirNameHint: root
 		})({
-			relativeFilePath: 'localize.test'
+			bundleKey: 'localize.test'
 		});
 		assert.strictEqual(localize(0, null), 'good day world');
 	});
@@ -82,7 +82,7 @@ describe('Localize', () => {
 			bundleFormat: nls.BundleFormat.languagePack,
 			dirNameHint: root,
 		})({
-			relativeFilePath: 'localize.test'
+			bundleKey: 'localize.test'
 		});
 		assert.strictEqual(localize(0, null), 'good day world');
 	});

@@ -31,12 +31,12 @@ let options: InternalOptions;
 
 export function loadMessageBundle(context?: InjectedContext) {
 	if (!context) {
-		// No file. We are in dev mode. Return the default
+		// No context. We are in dev mode. Return the default
 		// localize function.
 		return localize;
 	}
-	if (nlsData && nlsData[context.relativeFilePath]) {
-		return createScopedLocalizeFunction(nlsData[context.relativeFilePath]);
+	if (nlsData && nlsData[context.bundleKey]) {
+		return createScopedLocalizeFunction(nlsData[context.bundleKey]);
 	}
 	return function (key: string | number | LocalizeInfo, message: string, ...args: any[]): string {
 		if (typeof key === 'number') {

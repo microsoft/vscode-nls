@@ -317,12 +317,12 @@ function tryFindBundleDir(): string | undefined {
 }
 
 export function loadMessageBundle(context?: InjectedContext): LocalizeFunc {
-	if (!context || !context.relativeFilePath) {
+	if (!context || !context.bundleKey) {
 		// No file. We are in dev mode. Return the default
 		// localize function.
 		return localize;
 	}
-	const module = context.relativeFilePath;
+	const module = context.bundleKey;
 
 	let bundle: NlsBundle | null | undefined = resolvedBundleMap.get(context);
 	const bundleDir = tryFindBundleDir();
