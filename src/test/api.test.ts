@@ -5,8 +5,8 @@
 
 import * as assert from 'assert';
 
-import * as nls from '../../node';
-import * as nlsBrowser from '../../browser';
+import * as nls from '../../lib/node/main';
+import * as nlsBrowser from '../../lib/browser/main';
 
 describe('API', () => {
 	it('Exports same symbol names in both browser and node entry points', () => {

@@ -5,8 +5,8 @@
 
 import RAL from '../common/ral';
 
-import { setPseudo, localize, Options, LocalizeInfo, isString, MessageFormat, isNumber, format, LocalizeFunc } from '../common/common';
-export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
+import { setPseudo, localize, Options, LocalizeInfo, format, LocalizeFunc, InjectedContext } from '../common/common';
+export { BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
 
 let nlsData: { [key: string]: string[] };
 try {
@@ -23,28 +23,20 @@ interface InternalOptions {
 	language: string | undefined;
 	languagePackSupport: boolean;
 	cacheLanguageResolution: boolean;
-	messageFormat: MessageFormat;
 	languagePackId?: string;
 	cacheRoot?: string;
 }
 
 let options: InternalOptions;
 
-export function loadMessageBundle(file?: string) {
-	if (!file) {
+export function loadMessageBundle(context?: InjectedContext) {
+	if (!context) {
 		// No file. We are in dev mode. Return the default
 		// localize function.
 		return localize;
 	}
-	// Remove extension since we load json files.
-	if (file.endsWith('.js') || file.endsWith('.ts')) {
-		file = file.substring(0, file.length - 3);
-	}
-	if (file.startsWith('/')) {
-		file = file.substring(1);
-	}
-	if (nlsData && nlsData[file]) {
-		return createScopedLocalizeFunction(nlsData[file]);
+	if (nlsData && nlsData[context.relativeFilePath]) {
+		return createScopedLocalizeFunction(nlsData[context.relativeFilePath]);
 	}
 	return function (key: string | number | LocalizeInfo, message: string, ...args: any[]): string {
 		if (typeof key === 'number') {
@@ -64,20 +56,21 @@ export function config(opts?: Options) {
 
 function createScopedLocalizeFunction(messages: string[]): LocalizeFunc {
 	return function (key: any, message: string, ...args: any[]): string {
-		if (isNumber(key)) {
+		if (typeof key === 'number') {
 			if (key >= messages.length) {
 				console.error(`Broken localize call found. Index out of bounds. Stacktrace is\n: ${(<any>new Error('')).stack}`);
-				return;
+				return 'Failed to find string';
 			}
 			return format(messages[key], args);
 		} else {
-			if (isString(message)) {
+			if (typeof message === 'string') {
 				console.warn(`Message ${message} didn't get externalized correctly.`);
 				return format(message, args);
 			} else {
 				console.error(`Broken localize call found. Stacktrace is\n: ${(<any>new Error('')).stack}`);
 			}
 		}
+		return 'Failed to find string';
 	};
 }
 

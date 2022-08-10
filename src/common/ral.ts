@@ -2,10 +2,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { LocalizeFunc, LoadFunc, Options } from './common';
+import { LocalizeFunc, LoadFunc, Options, InjectedContext } from './common';
 
 interface RAL {
-	loadMessageBundle(file?: string): LocalizeFunc;
+	loadMessageBundle(context?: InjectedContext): LocalizeFunc;
 	config(opts?: Options): LoadFunc;
 }
 

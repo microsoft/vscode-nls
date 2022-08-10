@@ -5,12 +5,6 @@
 
 import RAL from './ral';
 
-export enum MessageFormat {
-	file = 'file',
-	bundle = 'bundle',
-	both = 'both'
-}
-
 export enum BundleFormat {
 	// the nls.bundle format
 	standalone = 'standalone',
@@ -20,8 +14,14 @@ export enum BundleFormat {
 export interface Options {
 	locale?: string;
 	cacheLanguageResolution?: boolean;
-	messageFormat?: MessageFormat;
 	bundleFormat?: BundleFormat;
+	dirNameHint?: string;
+}
+
+export interface InjectedContext {
+	id?: string;
+	metadataHash?: string;
+	relativeFilePath: string;
 }
 
 export interface LocalizeInfo {
@@ -32,7 +32,7 @@ export interface LocalizeInfo {
 namespace LocalizeInfo {
 	export function is(value: any): value is LocalizeInfo {
 		let candidate = value as LocalizeInfo;
-		return candidate && isDefined(candidate.key) && isDefined(candidate.comment);
+		return !!(candidate && candidate.key && candidate.comment);
 	}
 }
 
@@ -42,7 +42,7 @@ export interface LocalizeFunc {
 }
 
 export interface LoadFunc {
-	(file?: string): LocalizeFunc;
+	(context?: InjectedContext): LocalizeFunc;
 }
 
 export type SingleFileJsonFormat = string[] | { messages: string[]; keys: string[]; };
@@ -56,13 +56,6 @@ export type KeyInfo = string | LocalizeInfo;
 export interface MetaDataEntry {
 	messages: string[];
 	keys: KeyInfo[];
-}
-
-export interface MetadataHeader {
-	id: string;
-	type: string;
-	hash: string;
-	outDir: string;
 }
 
 export interface MetaDataFile {
@@ -80,25 +73,6 @@ export interface I18nBundle {
 			[messageKey: string]: string;
 		};
 	}
-}
-
-export interface LanguageBundle {
-	header: MetadataHeader;
-	nlsBundle: NlsBundle;
-}
-
-export function isDefined(value: any): boolean {
-	return typeof value !== 'undefined';
-}
-
-const toString = Object.prototype.toString;
-
-export function isNumber(value: any): value is number {
-	return toString.call(value) === '[object Number]';
-}
-
-export function isString(value: any): value is string {
-	return toString.call(value) === '[object String]';
 }
 
 export let isPseudo = false;
@@ -137,8 +111,8 @@ export function localize(_key: string | LocalizeInfo, message: string, ...args: 
 	return format(message, args);
 }
 
-export function loadMessageBundle(file?: string): LocalizeFunc {
-	return RAL().loadMessageBundle(file);
+export function loadMessageBundle(context?: InjectedContext): LocalizeFunc {
+	return RAL().loadMessageBundle(context);
 }
 
 export function config(opts?: Options): LoadFunc {

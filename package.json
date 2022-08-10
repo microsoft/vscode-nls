@@ -1,6 +1,6 @@
 {
 	"name": "vscode-nls",
-	"version": "5.1.0",
+	"version": "6.0.0",
 	"description": "NPM module to externalize and localize VSCode extensions",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
@@ -12,9 +12,7 @@
 		"url": "https://github.com/Microsoft/vscode-nls/issues"
 	},
 	"main": "./lib/node/main.js",
-	"browser": {
-		"./lib/node/main.js": "./lib/browser/main.js"
-	},
+	"browser": "./lib/browser/main.js",
 	"typings": "./lib/common/common.d.ts",
 	"devDependencies": {
 		"@types/mocha": "^9.1.0",

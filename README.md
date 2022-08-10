@@ -40,6 +40,10 @@ During development time the strings in the code are presented to the user. If th
 
 ## History
 
+### 6.0.0
+
+TODO: Add migration steps
+
 ### 5.1.0
 
 * Enable a mechanism for something to inject data into vscode-nls. This will be used by VS Code to inject translations into the nls module so that vscode-nls can work in the web. [Context in this PR](https://github.com/microsoft/vscode-nls/pull/42).

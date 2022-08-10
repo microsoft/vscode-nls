@@ -3,5 +3,8 @@
 	"typescript.tsdk": "./node_modules/typescript/lib",
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": true
-	}
+	},
+	"mochaExplorer.files": "lib/**/*.test.js",
+	"mochaExplorer.require": "source-map-support/register",
+	"mochaExplorer.watch": "lib/**/*.js"
 }

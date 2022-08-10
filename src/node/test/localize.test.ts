@@ -43,35 +43,47 @@ describe('Localize', () => {
 		assert.strictEqual(localize('key', message, 'bright'), '\uFF3BHeelloo bright Woorld\uFF3D');
 	});
 
-	it('External Data German flat', () => {
-		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })(path.join(root, 'data'));
+	it ('Resolves exact language', () => {
+		let localize:any = nls.config({
+			locale: 'de-CH',
+			bundleFormat: nls.BundleFormat.standalone,
+			dirNameHint: root
+		})({
+			relativeFilePath: 'localize.test'
+		});
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 
-	it('External Data German flat with extension', () => {
-		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })(path.join(root, 'data.js'));
+	it ('Resolves root language', () => {
+		let localize:any = nls.config({
+			locale: 'de-DE',
+			bundleFormat: nls.BundleFormat.standalone,
+			dirNameHint: root
+		})({
+			relativeFilePath: 'localize.test'
+		});
 		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
 	});
 
-	it('External Data German flat with extension separate load', () => {
-		nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file });
-		let localize:any = nls.loadMessageBundle(path.join(root, 'data.js'));
-		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
+	it ('Falls back to English', () => {
+		let localize:any = nls.config({
+			locale: 'zh-CN',
+			bundleFormat: nls.BundleFormat.standalone,
+			dirNameHint: root
+		})({
+			relativeFilePath: 'localize.test'
+		});
+		assert.strictEqual(localize(0, null), 'good day world');
 	});
 
-	it('External Data German structured', () => {
-		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.file })(path.join(root, 'dataStructured'));
-		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
-		assert.strictEqual(localize(1, null), 'Auf Wiedersehen Welt');
-	});
-
-	it ('External Bundle', () => {
-		let localize:any = nls.config({ locale: 'de-DE', messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFormat.standalone })(path.join(root, 'localize.test.js'));
-		assert.strictEqual(localize(0, null), 'Guten Tag Welt');
-	});
-
-	it('Default data file', () => {
-		let localize:any = nls.config({ locale: 'zh-tw', messageFormat: nls.MessageFormat.file })(path.join(root, 'data'));
-		assert.strictEqual(localize(0, null), 'Hello World');
+	it ('language pack fallback', () => {
+		let localize:any = nls.config({
+			locale: 'pt-BR',
+			bundleFormat: nls.BundleFormat.languagePack,
+			dirNameHint: root,
+		})({
+			relativeFilePath: 'localize.test'
+		});
+		assert.strictEqual(localize(0, null), 'good day world');
 	});
 });
