@@ -57,6 +57,7 @@ function initializeSettings() {
 		language: undefined,
 		languagePackSupport: false,
 		cacheLanguageResolution: true,
+		// TODO: Should this be something else?
 		dirNameHint: __dirname
 	};
 	if (typeof process.env.VSCODE_NLS_CONFIG === 'string') {
@@ -216,7 +217,6 @@ function touch(file: string) {
 function loadNlsBundleOrCreateFromI18n(context: InjectedContext, bundleDir: string): NlsBundle | undefined {
 	let result: NlsBundle | undefined;
 
-	// TODO: do we wanna keep in the hash part?
 	let bundle = path.join(options.cacheRoot!, `${context.id}-${context.metadataHash}.json`);
 	let useMemoryOnly: boolean = false;
 	let writeBundle: boolean = false;
@@ -301,7 +301,6 @@ function loadNlsBundle(context: InjectedContext, bundleDir: string): NlsBundle |
 }
 
 function tryFindBundleDir(): string | undefined {
-	// TODO: Should this be something else?
 	let dirname = options.dirNameHint;
 	while (true) {
 		const result = path.join(dirname, 'nls.metadata.json');
