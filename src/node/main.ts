@@ -10,10 +10,20 @@ import RAL from '../common/ral';
 
 import {
 	format, localize, isDefined, setPseudo, isPseudo, MessageFormat, BundleFormat, Options, TranslationConfig, LanguageBundle, LocalizeFunc,
-	NlsBundle, MetaDataFile, MetadataHeader, I18nBundle, SingleFileJsonFormat, LoadFunc, isString, isNumber
+	NlsBundle, MetaDataFile, MetadataHeader, I18nBundle, SingleFileJsonFormat, LoadFunc
 } from '../common/common';
 
 export { MessageFormat, BundleFormat, Options, LocalizeInfo, LocalizeFunc, LoadFunc, KeyInfo } from '../common/common';
+
+const toString = Object.prototype.toString;
+
+function isNumber(value: any): value is number {
+	return toString.call(value) === '[object Number]';
+}
+
+function isString(value: any): value is string {
+	return toString.call(value) === '[object String]';
+}
 
 function isBoolean(value: any): value is boolean {
 	return value === true || value === false;
