@@ -91,16 +91,6 @@ export function isDefined(value: any): boolean {
 	return typeof value !== 'undefined';
 }
 
-const toString = Object.prototype.toString;
-
-export function isNumber(value: any): value is number {
-	return toString.call(value) === '[object Number]';
-}
-
-export function isString(value: any): value is string {
-	return toString.call(value) === '[object String]';
-}
-
 export let isPseudo = false;
 
 export function setPseudo(pseudo: boolean) {
