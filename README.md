@@ -11,6 +11,7 @@ primary use case is for VSCode extensions.
 ## Usage
 
 ```typescript
+// This must be the first import in the main entry file
 import * as nls from 'vscode-nls';
 
 let localize = nls.config({ locale: 'de-DE' })();
@@ -24,6 +25,7 @@ The `config` call configures the nls module and should only be called once in th
 In secondary modules loaded from the 'main' module no configuration is necessary. However you still need to load the nls module and load the message bundle. This looks like this:
 
 ```typescript
+// In secondary file this import can be at random places.
 import * as nls from 'vscode-nls';
 
 let localize = nls.loadMessageBundle();
@@ -37,6 +39,19 @@ During development time the strings in the code are presented to the user. If th
 * the string is prefixed with '\uFF3B' (Unicode zenkaku representation for [) and postfixed with '\uFF3D' (Unicode zenkaku representation for ])
 
 ## History
+
+### 5.2.0
+
+* Removes injection mechanism due to breaking extensions. Please see [Issue #44](https://github.com/microsoft/vscode-nls/issues/44) for more details.
+
+### 5.1.0
+
+* Enable a mechanism for something to inject data into vscode-nls. This will be used by VS Code to inject translations into the nls module so that vscode-nls can work in the web. [Context in this PR](https://github.com/microsoft/vscode-nls/pull/42).
+
+### 5.0.1
+
+* Fixes null check in `nls.config({...})` on web. [Context in this PR by @a-stewart](https://github.com/microsoft/vscode-nls/pull/37)
+* Misc dependency upgrades
 
 ### 5.0.0
 
