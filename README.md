@@ -1,5 +1,6 @@
 # vscode-nls
 
+> ⚠️ This package is no longer receiving new features in favor of the new localization library, [vscode-l10n](https://github.com/microsoft/vscode-l10n). Please use that collection of libraries instead.
 
 CommonJS module to support externalization and localization. The module only depends on Node.js however its
 primary use case is for VSCode extensions.
