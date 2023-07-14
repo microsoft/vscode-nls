@@ -107,8 +107,7 @@ export function format(message: string, args: any[]): string {
 		result = message;
 	}
 	else {
-		result = message.replace(/\{(\d+)\}/g, (match, rest) => {
-			let index = rest[0];
+		result = message.replace(/{(\d+)}/g, (match, index) => {
 			let arg = args[index];
 			let replacement = match;
 			if (typeof arg === 'string') {
